@@ -3,20 +3,14 @@
 namespace App\Filament\Pages;
 
 use App\Models\Config;
-use Filament\Forms\Components\Actions\Modal\Actions\Action;
-use Filament\Forms\Components\Card;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Contracts\HasFormActions;
 use Filament\Pages\Page;
-use Filament\Pages\Actions;
 use Filament\Resources\Pages\Concerns\UsesResourceForm;
 use Illuminate\Http\Request;
 
@@ -52,6 +46,8 @@ class GatewaySettingPage extends Page implements HasFormActions
 
     public function __construct()
     {
+        parent::__construct();
+
         $gateway = Config::find(Config::$GATEWAY_CODE);
         if($gateway){
             $this->gateway_enable = $gateway->data['enable'];
@@ -62,7 +58,7 @@ class GatewaySettingPage extends Page implements HasFormActions
         $smtp = Config::find(Config::$SMTP_CODE);
         if($smtp){
             $this->smtp_host = $smtp->data['host'];
-            $this->smtp_port = $smtp->data['port'];
+            $this->smtp_port = (int) $smtp->data['port'];
             $this->smtp_username = $smtp->data['username'];
             $this->smtp_password = $smtp->data['password'];
             $this->smtp_encryption = $smtp->data['encryption'];
@@ -130,7 +126,8 @@ class GatewaySettingPage extends Page implements HasFormActions
         ];
     }
 
-    public function create(Request $request) {
+    public function create(Request $request)
+    {
         try {
             $gateway = [
                 'enable'    => $this->gateway_enable,
