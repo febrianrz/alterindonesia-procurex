@@ -17,5 +17,6 @@ before_script:
 
 build_image:
   script:
-    - docker build .
+    - docker build -t test-sso-procurex-runner .
+    - docker run test-sso-procurex-runner
 
