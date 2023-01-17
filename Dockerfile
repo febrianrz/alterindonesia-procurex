@@ -11,7 +11,7 @@ FROM composer:${COMPOSER_VERSION} AS vendor
 WORKDIR /var/www/html
 COPY composer* ./
 RUN composer install \
-  --no-dev \
+  #--no-dev \
   --no-interaction \
   --prefer-dist \
   --ignore-platform-reqs \
