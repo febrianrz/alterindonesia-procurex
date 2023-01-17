@@ -38,7 +38,7 @@ class Auth extends \Illuminate\Support\Facades\Auth {
     public static function user(): Auth|\Illuminate\Contracts\Auth\Authenticatable|null
     {
         try {
-            if(self::$instance === null) {
+            if(self::$instance === null && request()->header('Authorization')) {
                 $authorization = str_replace('Bearer ','',request()->header('Authorization'));
                 $jwt = JWT::decode($authorization, new Key(env('PROCUREX_ENCRYPTION_KEY'), 'HS256'));
                 $encryption = new \Illuminate\Encryption\Encrypter( env('PROCUREX_ENCRYPTION_KEY'), 'aes-256-cbc');
