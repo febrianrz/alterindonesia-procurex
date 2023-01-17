@@ -21,7 +21,7 @@ build_image:
   script:
     #- docker build -t registry.gitlab.com/itdevpi/procurex/sso-service .
     #- docker push registry.gitlab.com/itdevpi/procurex/sso-service
-    - cp /home/administrator/env-procurex-config .env
+    - cp /home/gitlab-runner/env-sso .env
     - docker build -t sso-procurex-docker .
     - docker run -d -p 9001:9000 --network=host sso-procurex-docker
 
