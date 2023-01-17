@@ -17,6 +17,6 @@ before_script:
 
 build_image:
   script:
-    - docker build -t test-sso-procurex-runner .
-    - docker run test-sso-procurex-runner
+    - docker build -t registry.gitlab.com/itdevpi/procurex/sso-service .
+    - docker push registry.gitlab.com/itdevpi/procurex/sso-service
 
