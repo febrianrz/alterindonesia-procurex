@@ -11,6 +11,8 @@ default:
 #  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
 build_image:
+  only:
+    - main
   script:
     - cp /home/gitlab-runner/env-sso .env
     - docker stop $(docker ps -a -q --filter ancestor=procurex-sso --format="{{.ID}}") || true
