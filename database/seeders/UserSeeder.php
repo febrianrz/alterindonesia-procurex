@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
     public function run()
     {
         $company = Company::find('A000');
-        $user = \App\Models\User::updateOrCreate([
+        $user = \App\Models\User::firstOrCreate([
             'username'  => 'superadmin',
         ],
             [

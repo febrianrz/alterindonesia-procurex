@@ -52,7 +52,7 @@ class ConfigSeeder extends Seeder
             'data'  => $sap
         ]);
 
-        AuthClient::updateOrCreate([
+        AuthClient::firstOrCreate([
             'id'    => 1,
         ],[
             'name'  => 'App',

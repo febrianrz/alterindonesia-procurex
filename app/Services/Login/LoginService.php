@@ -19,7 +19,7 @@ class LoginService implements LoginInterface {
 
         //check ke gateway
 
-        $expiredAt = Carbon::now()->addSeconds(env('PROCUREX_AUTH_DURATION_IN_SECONDS') ?? 7200)->timestamp;
+        $expiredAt = Carbon::now()->addSeconds(config('procurex.gateway.duration'))->timestamp;
         $jwt = $this->generateJWT($user,$expiredAt);
         return [
             'token_type'    => 'Bearer',
@@ -34,15 +34,12 @@ class LoginService implements LoginInterface {
      */
     private function generateJWT(User $user,$expiredAt) : string
     {
-        if(!env('PROCUREX_ENCRYPTION_KEY')) {
-            dd("PROCUREX_ENCRYPTION_KEY IS NOT DEFINED");
-        }
 
         $payload = json_decode((new LoginResource($user))->toJson());
         $kong = $this->getKongData($user);
         if(!isset($kong['key'])) throw new \Exception("Unauthenticated");
         $kong_iss = $kong['key'];
-        $encryption = new \Illuminate\Encryption\Encrypter( env('PROCUREX_ENCRYPTION_KEY'), 'aes-256-cbc');
+        $encryption = new \Illuminate\Encryption\Encrypter( config('procurex.gateway.secret'), 'aes-256-cbc');
         $newPayload = [
             'iss'       => $kong_iss,
             'value'     => $encryption->encrypt($payload),
@@ -66,7 +63,7 @@ class LoginService implements LoginInterface {
 
     private function getConsumer(User $user){
         if(!$user->consumer_id){
-            $post = Http::post(env('PROCUREX_GATEWAY_URL')."/consumers",[
+            $post = Http::post(config('procurex.gateway.host')."/consumers",[
                 'username'  => $user->username,
                 'custom_id' => 'procurex-'.$user->id.'-'.$user->username,
             ]);
@@ -79,9 +76,9 @@ class LoginService implements LoginInterface {
 
     private function getKeyJWT($user) {
         if(!$user->consumer_id) throw new \Exception("Failed Get Response From Gateway");
-        $host = env('PROCUREX_GATEWAY_URL');
+        $host = config('procurex.gateway.host');;
         $post = Http::post($host."/consumers/{$user->consumer_id}/jwt",[
-            'secret'                => env('PROCUREX_ENCRYPTION_KEY'),
+            'secret'                => config('procurex.gateway.secret'),
         ]);
         // jika consumer di gateway dihapus, maka generate baru
         if($post->status() == 404) {
@@ -90,9 +87,9 @@ class LoginService implements LoginInterface {
             $user->consumer_id = $consumer_id;
             $user->save();
 
-            $host = env('PROCUREX_GATEWAY_URL');
+            $host = config('procurex.gateway.host');
             $post = Http::post($host."/consumers/{$user->consumer_id}/jwt",[
-                'secret'                => env('PROCUREX_ENCRYPTION_KEY'),
+                'secret'                => config('procurex.gateway.secret'),
             ]);
         }
         return $post->json();
@@ -113,7 +110,7 @@ class LoginService implements LoginInterface {
      * @throws \Exception
      */
     private function getListJWT(?string $consumer_id) {
-        $host = env('PROCUREX_GATEWAY_URL');
+        $host = config('procurex.gateway.host');
         $result = Http::get("{$host}/consumers/{$consumer_id}/jwt");
         if($result->status() !== 200) throw new \Exception("Failed Get Credential List");
         return $result->json();
@@ -123,7 +120,7 @@ class LoginService implements LoginInterface {
      * @throws \Exception
      */
     private function logoutCredential($consumer_id, $jwt){
-        $host = env('PROCUREX_GATEWAY_URL');
+        $host = config('procurex.gateway.host');
         $result = Http::get("{$host}/consumers/{$consumer_id}/jwt/{$jwt}");
         if($result->status() !== 200) throw new \Exception("Failed Delete Credential List");
     }
