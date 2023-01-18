@@ -7,14 +7,37 @@ default:
   tags:
     - procurex
 
+stages:
+  - prepare
+  - deploy
+  - test
+
+
 #before_script:
 #  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
-build_image:
+build_prepare:
+  stage: prepare
+  only:
+    - main
   script:
     - cp /home/gitlab-runner/env-sso .env
-    - docker stop $(docker ps -a -q --filter ancestor=procurex-sso --format="{{.ID}}")
+    - docker stop $(docker ps -a -q --filter ancestor=procurex-sso --format="{{.ID}}") || true
+    - docker rmi -f $(docker images -f "dangling=true" -q) || true
+
+build_deploy:
+  stage: deploy
+  only:
+    - main
+  script:
     - docker build -t procurex-sso .
     - docker run -d --network=procurex-net --restart unless-stopped -p 9001:9000 procurex-sso
-    
-  
+
+build_test:
+  stage: test
+  only:
+    - main
+  script:
+    - docker exec -it $(docker ps -a -q --filter ancestor=procurex-sso --format="{{.ID}}") php artisan test
+
+
