@@ -14,6 +14,7 @@ build_image:
   script:
     - cp /home/gitlab-runner/env-sso .env
     - docker stop $(docker ps -a -q --filter ancestor=procurex-sso --format="{{.ID}}")
+    - docker rmi $(docker images -f "dangling=true" -q)
     - docker build -t procurex-sso .
     - docker run -d --network=procurex-net --restart unless-stopped -p 9001:9000 procurex-sso
     
