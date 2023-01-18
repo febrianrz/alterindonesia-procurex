@@ -69,7 +69,9 @@ class LoginService implements LoginInterface {
             ]);
             $user->consumer_id = isset($post->json()['id']) ? $post->json()['id'] : null;
             $user->save();
+            dd($post->json());
         }
+
         if(!$user->consumer_id) throw new \Exception("Failed Get Response From Gateway");
         return $user->consumer_id;
     }
