@@ -31,6 +31,7 @@ build_image:
     - main
   script:
     - cp /home/gitlab-runner/env-sso .env
+    - cp /home/gitlab-runner/env-sso-testing .env.testing
     - docker build -t procurex-sso .
 
 build_deploy:
