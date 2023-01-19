@@ -70,6 +70,7 @@ class Auth extends \Illuminate\Support\Facades\Auth {
 
     public function hasPermission($permissionName) : bool
     {
+        if(self::isSuperadmin()) return true;
         $exists = Role::join('role_has_permissions','role_has_permissions.role_id','roles.id')
             ->join('permissions','permissions.id','role_has_permissions.permission_id')
             ->where('permissions.name',$permissionName)
@@ -77,6 +78,11 @@ class Auth extends \Illuminate\Support\Facades\Auth {
             ->first();
         if($exists) return true;
         return false;
+    }
+
+    public function isSuperadmin() : bool
+    {
+       return (in_array("superadmin",self::pluckRoleName()));
     }
 
     public function pluckRoleName() : array

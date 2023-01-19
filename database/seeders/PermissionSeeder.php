@@ -17,6 +17,15 @@ class PermissionSeeder extends Seeder
      */
     public function run()
     {
+        $routePermission = [
+            // users
+            'api.users.index',
+            'api.users.store',
+            'api.users.update',
+            'api.users.destroy',
+            'api.users.show',
+        ];
+
         $resoucePermissions = [
             'company',
             'role',
@@ -69,7 +78,17 @@ class PermissionSeeder extends Seeder
           ]);
       }
 
-      $role = Role::find(1);
-      $role->givePermissionTo(Permission::all());
+        foreach ($routePermission as $item) {
+            Permission::updateOrCreate([
+                'name'  => "{$item}",
+                'guard_name' => 'api'
+            ],[
+                'created_at'    => Carbon::now(),
+                'updated_at'    => Carbon::now()
+            ]);
+        }
+
+//      $role = Role::find(1);
+//      $role->givePermissionTo(Permission::all());
     }
 }
