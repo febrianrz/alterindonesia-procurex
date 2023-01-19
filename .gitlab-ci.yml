@@ -22,7 +22,6 @@ build_prepare:
   only:
     - main
   script:
-    - cp /home/gitlab-runner/env-sso .env
     - docker stop $(docker ps -a -q --filter ancestor=procurex-sso --format="{{.ID}}") || true
     - docker rmi -f $(docker images -f "dangling=true" -q) || true
 
@@ -31,6 +30,7 @@ build_image:
   only:
     - main
   script:
+    - cp /home/gitlab-runner/env-sso .env
     - docker build -t procurex-sso .
 
 build_deploy:
