@@ -11,7 +11,7 @@ interface RestApiContract {
      * @param Model $model
      * @return array
      */
-    public function index(Request $request, Model $model) : array;
+    public function index(Request $request) : array;
 
     /**
      * @param Request $request

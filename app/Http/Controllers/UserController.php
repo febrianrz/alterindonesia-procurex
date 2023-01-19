@@ -12,21 +12,18 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class UserController extends Controller
 {
     private RestApiContract $service;
-    private Model $model;
 
     public function __construct(
-        RestApiContract $service,
-        User $user,
+        RestApiContract $service
     ) {
         $this->service = $service;
-        $this->model = $user;
     }
 
 
     public function index(Request $request): \Illuminate\Http\JsonResponse
     {
         try {
-            $data = $this->service->index($request, $this->model);
+            $data = $this->service->index($request);
             return $this->responseSuccess(__("Success"),$data);
         } catch (\Exception $e){
             return $this->responseError($e->getMessage());

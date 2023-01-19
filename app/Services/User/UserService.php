@@ -11,15 +11,21 @@ use Yajra\DataTables\Facades\DataTables;
 
 class UserService implements RestApiContract {
 
+    private $model;
+    private $resource;
+
+    public function __construct($model, $resource) {
+        $this->model = new $model;
+        $this->resource = $resource;
+    }
     /**
      * @param Request $request
-     * @param Model $model
      * @return array
      * @throws \Exception
      */
-    public function index(Request $request, Model $model): array
+    public function index(Request $request): array
     {
-        $resource = UserResource::collection($model->paginate())->toArray($request);
+        $resource = $this->resource::collection($this->model->paginate())->toArray($request);
         return DataTables::of(source: $resource)->toArray();
     }
 
