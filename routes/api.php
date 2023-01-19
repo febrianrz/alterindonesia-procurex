@@ -18,7 +18,7 @@ Route::middleware(['log.activity'])->group(function(){
 
         Route::middleware(['auth.jwt.permission'])->group(function(){
             Route::get('/users','App\Http\Controllers\UserController@index')->name('api.users.index');
-//            Route::get('/users/{id}','App\Http\Controllers\UserController@show')->name('api.users.show');
+            Route::get('/users/{id}','App\Http\Controllers\UserController@show')->name('api.users.show');
         });
 
     });

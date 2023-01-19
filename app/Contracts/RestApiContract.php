@@ -8,34 +8,32 @@ use Illuminate\Http\Resources\Json\JsonResource;
 interface RestApiContract {
     /**
      * @param Request $request
-     * @param Model $model
-     * @return array
+     * @return Model
      */
-    public function index(Request $request) : array;
+    public function index(Request $request) : Model;
 
     /**
      * @param Request $request
-     * @param Model $model
-     * @return array
+     * @return Model
      */
-    public function store(Request $request, Model $model) : array;
+    public function store(Request $request) : Model;
 
     /**
      * @param Request $request
-     * @param Model $model
-     * @return array
+     * @param $id
+     * @return Model
      */
-    public function update(Request $request, Model $model) : array;
+    public function update(Request $request, $id) : Model;
 
     /**
-     * @param Model $model
-     * @return array
+     * @param $id
+     * @return Model
      */
-    public function show(Model $model) : array;
+    public function show($id) : Model;
 
     /**
-     * @param Model $model
-     * @return array
+     * @param $id
+     * @return Model
      */
-    public function destroy(Model $model) : array;
+    public function destroy($id) : Model;
 }
