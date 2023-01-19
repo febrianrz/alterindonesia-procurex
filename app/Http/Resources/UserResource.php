@@ -7,13 +7,19 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class UserResource extends JsonResource
 {
     /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
+     * @param $request
+     * @return array|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable
      */
-    public function toArray($request)
+    public function toArray($request): array|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable
     {
-        return [];
+        return [
+            'id'    => $this->id,
+            'name'  => $this->name,
+            'email' => $this->email,
+            'username'=> $this->username,
+            'company_code'=> $this->company_code,
+            'status'    => $this->status,
+            'consumer_id'=> $this->consumer_id
+        ];
     }
 }
