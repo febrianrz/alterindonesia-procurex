@@ -25,8 +25,8 @@ class GlobalHelper {
         $meta = [
             'message'   => $message instanceof \Exception ? $message->getMessage() : $message,
             'code'      => $code,
-            'number'    => $message->getLine(),
-            'action'    => $message->getFile()
+//            'number'    => $message->getLine(),
+//            'action'    => $message->getFile()
         ];
         return response()->json([
             'meta'   => $meta,
