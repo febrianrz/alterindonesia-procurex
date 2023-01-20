@@ -2,6 +2,7 @@
 namespace App\Helpers;
 
 use http\Client\Response;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Yajra\DataTables\DataTableAbstract;
 
 class GlobalHelper {
@@ -13,10 +14,24 @@ class GlobalHelper {
                     'message' => $message,
                     'code' => $code,
                 ],
-                'data' => $data->collection,
                 'draw' => isset($data->toArray()['draw']) ? $data->toArray()['draw'] : 0,
                 'recordsTotal' => isset($data->toArray()['recordsTotal']) ? $data->toArray()['recordsTotal'] : 0,
                 'recordsFiltered' => isset($data->toArray()['recordsFiltered']) ? $data->toArray()['recordsFiltered'] : 0
+            ], $code);
+        } else if($data instanceof JsonResource) {
+            return response()->json([
+                'meta' => [
+                    'message' => $message,
+                    'code' => $code,
+                    'count' => $data->count(),
+                    'total' => $data->total(),
+                    'perPage'=> $data->perPage(),
+                    'currentPage'   => $data->currentPage()
+//                    'prev'  => $data->previousPageUrl(),
+//                    'next'  => $data->nextPageUrl(),
+//
+                ],
+                'data'  => $data
             ], $code);
         } else {
             return response()->json([
@@ -24,7 +39,7 @@ class GlobalHelper {
                     'message' => $message,
                     'code' => $code,
                 ],
-                'data' => $data
+                'data'  => $data
             ], $code);
         }
     }

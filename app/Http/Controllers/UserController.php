@@ -31,12 +31,11 @@ class UserController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request): \Illuminate\Http\JsonResponse
+    public function index(Request $request)
     {
         try {
             $query = $this->service->index($request);
-            $result = $this->toDatatable($this->resource,$query);
-            return $this->responseSuccess(__("Success"),$result);
+            return $this->responseSuccess(__("Success"), $this->toTableList($this->resource,$query));
         } catch (\Exception $e){
             return $this->responseError($e->getMessage());
         }
@@ -51,7 +50,7 @@ class UserController extends Controller
     {
         try {
             $query = $this->service->show($id);
-            return $this->responseSuccess(__("Success"), $this->toSingleResource($this->resource, $query));
+            return $this->responseSuccess(__("Success"), $this->toRow($this->resource, $query));
         } catch (\Exception $e){
             return $this->responseError($e->getMessage());
         }

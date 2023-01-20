@@ -8,15 +8,15 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 trait HasResource {
 
+    protected int $perPage = 25;
     /**
      * @param string $resource
      * @param Model $model
-     * @return \Yajra\DataTables\DataTableAbstract
-     * @throws \Exception
+     * @return JsonResource
      */
-    public function toDatatable(string $resource, Model $model): \Yajra\DataTables\DataTableAbstract
+    public function toTableList(string $resource, Model $model): JsonResource
     {
-        return DataTables::of($resource::collection($model->paginate(10)));
+        return $resource::collection($model->paginate($this->perPage));
     }
 
     /**
@@ -24,7 +24,7 @@ trait HasResource {
      * @param Model $model
      * @return JsonResource
      */
-    public function toSingleResource(string $resource, Model $model): JsonResource
+    public function toRow(string $resource, Model $model): JsonResource
     {
         return new $resource($model);
     }
