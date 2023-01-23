@@ -23,6 +23,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        # Start User Management
+        // Role Binding
+        $this->app->when(\App\Http\Controllers\MasterData\UserManagement\RoleController::class)
+            ->needs(\App\Services\MasterData\MasterDataServiceInterface::class)
+            ->give(\App\Services\MasterData\UserManagement\RoleServiceEloquent::class);
+
+        // Permission Binding
+        $this->app->when(\App\Http\Controllers\MasterData\UserManagement\PermissionController::class)
+            ->needs(\App\Services\MasterData\MasterDataServiceInterface::class)
+            ->give(\App\Services\MasterData\UserManagement\PermissionServiceEloquent::class);
+        # End User Management
+
         # Start Module Management
         // Module Binding
         $this->app->when(\App\Http\Controllers\MasterData\ModuleManagement\ModuleController::class)

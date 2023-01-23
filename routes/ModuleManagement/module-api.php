@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Http\Controllers\MasterData\ModuleManagement\ModuleController;
 use Illuminate\Support\Facades\Route;
 
