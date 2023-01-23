@@ -23,17 +23,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->app->bind(
-            \App\Services\Module\ModuleServiceInterface::class,
-            \App\Services\Module\ModuleServiceEloquent::class
-        );
-        $this->app->bind(
-            \App\Services\Menu\MenuServiceInterface::class,
-            \App\Services\Menu\MenuServiceEloquent::class
-        );
-        $this->app->bind(
-            \App\Services\SubMenu\SubMenuServiceInterface::class,
-            \App\Services\SubMenu\SubMenuServiceEloquent::class
-        );
+        # Start Module Management
+        // Module Binding
+        $this->app->when(\App\Http\Controllers\MasterData\ModuleManagement\ModuleController::class)
+            ->needs(\App\Services\MasterData\MasterDataServiceInterface::class)
+            ->give(\App\Services\MasterData\ModuleManagement\ModuleServiceEloquent::class);
+        // Menu Binding
+        $this->app->when(\App\Http\Controllers\MasterData\ModuleManagement\MenuController::class)
+            ->needs(\App\Services\MasterData\MasterDataServiceInterface::class)
+            ->give(\App\Services\MasterData\ModuleManagement\MenuServiceEloquent::class);
+        // SubMenu Binding
+        $this->app->when(\App\Http\Controllers\MasterData\ModuleManagement\SubMenuController::class)
+            ->needs(\App\Services\MasterData\MasterDataServiceInterface::class)
+            ->give(\App\Services\MasterData\ModuleManagement\SubMenuServiceEloquent::class);
+        # End Module Management
     }
 }

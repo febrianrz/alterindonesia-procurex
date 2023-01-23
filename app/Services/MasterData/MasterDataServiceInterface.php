@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Services\SubMenu;
+namespace App\Services\MasterData;
 
 use Illuminate\Http\Request;
 
-interface SubMenuServiceInterface
+interface MasterDataServiceInterface
 {
     public function list();
 

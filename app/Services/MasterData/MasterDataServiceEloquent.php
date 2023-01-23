@@ -1,19 +1,25 @@
 <?php
 
 
-namespace App\Services\Menu;
+namespace App\Services\MasterData;
 
-use App\Http\Resources\MenuResource;
-use App\Models\Menu;
+use App\Libraries\Auth;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class MenuServiceEloquent implements MenuServiceInterface
+class MasterDataServiceEloquent implements MasterDataServiceInterface
 {
     /**
-     * @var Menu
+     * @var Model
      */
-    protected Menu $model;
+    protected Model $model;
+
+    /**
+     * @var mixed|string
+     */
+    protected mixed $resource;
 
     /**
      * @var array
@@ -21,12 +27,14 @@ class MenuServiceEloquent implements MenuServiceInterface
     protected array $result;
 
     /**
-     * MenuServiceEloquent constructor.
-     * @param Menu $model
+     * MasterDataServiceEloquent constructor.
+     * @param Model $model
+     * @param string $resource
      */
-    public function __construct(Menu $model)
+    public function __construct(Model $model, $resource = JsonResource::class)
     {
         $this->model = $model;
+        $this->resource = $resource;
         $this->result = [
             "status"    => true,
             "code"      => JsonResponse::HTTP_OK,
@@ -40,8 +48,8 @@ class MenuServiceEloquent implements MenuServiceInterface
      */
     public function list(): array
     {
-        // get data menu with paginate format
-        $this->result["data"] = MenuResource::collection($this->model->paginate())->response()->getData();
+        // get data module with paginate format
+        $this->result["data"] = $this->resource::collection($this->model->paginate())->response()->getData();
 
         // return result
         return $this->result;
@@ -53,17 +61,15 @@ class MenuServiceEloquent implements MenuServiceInterface
      */
     public function create(Request $request): array
     {
-        // create new menu
-        $menu = $this->model->create([
-            "module_id"     => $request->module_id,
-            "name"          => $request->name,
-            "icon"          => $request->icon,
-            "created_by"    => 1
-        ]);
+        // generate new data
+        $newData = $this->generateNewData($request);
+
+        // create data
+        $data = $this->model->create($newData);
 
         // set success result
         $this->result["message"] = __("master_data.created");
-        $this->result["data"] = new MenuResource($menu);
+        $this->result["data"] = new $this->resource($data);
 
         // return result
         return $this->result;
@@ -75,13 +81,13 @@ class MenuServiceEloquent implements MenuServiceInterface
      */
     public function detail(string $id): array
     {
-        // find menu by id
-        $menu = $this->model->where("id", "=", $id)->first();
+        // find data by id
+        $data = $this->find($id);
 
-        // check menu existence
-        if (!is_null($menu)) {
+        // check data existence
+        if (!is_null($data)) {
             // set success result
-            $this->result["data"] = new MenuResource($menu);
+            $this->result["data"] = new $this->resource($data);
         } else {
             // set failed result
             $this->result["status"] = false;
@@ -100,23 +106,20 @@ class MenuServiceEloquent implements MenuServiceInterface
      */
     public function update(string $id, Request $request): array
     {
-        // find menu by id
-        $menu = $this->find($id);
+        // find data by id
+        $data = $this->find($id);
 
-        // check menu existence
-        if (!is_null($menu)) {
-            // set data menu
-            $menu->module_id = $request->module_id;
-            $menu->name = $request->name;
-            $menu->icon = $request->icon;
-            $menu->status = $request->status;
-            $menu->updated_by = 1;
-            // update data menu
-            $menu->save();
+        // check data existence
+        if (!is_null($data)) {
+            // set data
+            $this->setUpdatedData($data, $request);
+
+            // update data
+            $data->save();
 
             // set success result
             $this->result["message"] = __("master_data.updated");
-            $this->result["data"] = new MenuResource($menu);
+            $this->result["data"] = new $this->resource($data);
         } else {
             // set failed result
             $this->result["status"] = false;
@@ -134,13 +137,13 @@ class MenuServiceEloquent implements MenuServiceInterface
      */
     public function delete(string $id): array
     {
-        // find menu by id
-        $menu = $this->find($id);
+        // find data by id
+        $data = $this->find($id);
 
-        // check menu existence
-        if (!is_null($menu)) {
-            // delete data module
-            $menu->delete();
+        // check data existence
+        if (!is_null($data)) {
+            // delete data
+            $data->delete();
 
             // set success result
             $this->result["message"] = __("master_data.deleted");
@@ -161,13 +164,13 @@ class MenuServiceEloquent implements MenuServiceInterface
      */
     public function restore(string $id): array
     {
-        // find menu by id
-        $menu = $this->model->onlyTrashed()->where("id", "=", $id)->first();
+        // find module by id
+        $module = $this->model->onlyTrashed()->where("id", "=", $id)->first();
 
-        // check menu existence
-        if (!is_null($menu)) {
-            // restore data menu
-            $menu->restore();
+        // check module existence
+        if (!is_null($module)) {
+            // restore data module
+            $module->restore();
 
             // set success result
             $this->result["message"] = __("master_data.restored");
@@ -184,13 +187,28 @@ class MenuServiceEloquent implements MenuServiceInterface
 
     /**
      * @param string $id
-     * @return Menu | null
+     * @return Model | null
      */
-    private function find(string $id): ?Menu
+    protected function find(string $id): ?Model
     {
-        return $this->model
-            ->where("id", "=", $id)
-            ->where("status", "=", $this->model::STATUS_ACTIVE)
-            ->first();
+        return $this->model->where("id", "=", $id)->first();
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    protected function generateNewData(Request $request): array
+    {
+        return [];
+    }
+
+    /**
+     * @param Request $request
+     * @return Model
+     */
+    protected function setUpdatedData(Model $model, Request $request): Model
+    {
+        return $this->model;
     }
 }

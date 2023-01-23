@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Menu;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class ModuleRequest extends FormRequest
+class SubMenuRequest extends FormRequest
 {
     const REGEX_RULES = "regex:/^[\w\s\.\\\,\-\_\/]*$/i";
 
@@ -26,6 +28,13 @@ class ModuleRequest extends FormRequest
     public function rules()
     {
         return [
+            "menu_id" => [
+                "required",
+                "integer",
+                Rule::exists("menus", "id")->where(function ($query) {
+                    return $query->where("status", "=", Menu::STATUS_ACTIVE)->whereNull("deleted_at");
+                })
+            ],
             "name" => "required|string|min:3|max:50|".static::REGEX_RULES,
             "icon" => "present|string|nullable|max:50|".static::REGEX_RULES,
             "status" => "required|string|in:ACTIVE,INACTIVE"

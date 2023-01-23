@@ -1,25 +1,29 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\MasterData;
 
-use App\Services\Menu\MenuServiceInterface;
+use App\Http\Controllers\Controller;
+use App\Services\MasterData\MasterDataServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class MenuController extends Controller
+class MasterDataController extends Controller
 {
     /**
-     * @var MenuServiceInterface
+     * @var MasterDataServiceInterface
      */
-    private MenuServiceInterface $service;
+    protected MasterDataServiceInterface $service;
+
+    protected $request;
 
     /**
-     * MenuController constructor.
-     * @param MenuServiceInterface $service
+     * MasterDataController constructor.
+     * @param MasterDataServiceInterface $service
      */
-    public function __construct(MenuServiceInterface $service)
+    public function __construct(MasterDataServiceInterface $service, Request $request)
     {
         $this->service = $service;
+        $this->request = $request;
     }
 
     /**
@@ -39,13 +43,17 @@ class MenuController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  Request  $request
      * @return JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function storeData(): JsonResponse
     {
         // create new menu
-        $result = $this->service->create($request);
+        $result = $this->service->create($this->request);
+
+        // check result
+        if (!$result["status"]) {
+            return $this->responseError($result["message"], $result["data"], $result["code"]);
+        }
 
         // return success response
         return $this->responseSuccess($result["message"], $result["data"], JsonResponse::HTTP_CREATED);
@@ -74,14 +82,13 @@ class MenuController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  Request  $request
      * @param  string  $id
      * @return JsonResponse
      */
-    public function update(Request $request, string $id)
+    public function updateData(string $id): JsonResponse
     {
         // update data module
-        $result = $this->service->update($id, $request);
+        $result = $this->service->update($id, $this->request);
 
         // check result
         if (!$result["status"]) {

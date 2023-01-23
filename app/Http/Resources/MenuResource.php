@@ -16,7 +16,10 @@ class MenuResource extends JsonResource
     {
         return [
             "id"        => (int) $this->id,
-            "module"    => (string) $this->module->name,
+            "module"    => [
+                "id"    => (int) $this->module->id,
+                "name"  => (string) $this->module->name
+            ],
             "name"      => (string) $this->name,
             "icon"      => (string) $this->icon,
             "status"    => (string) $this->status

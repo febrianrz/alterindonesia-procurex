@@ -16,7 +16,10 @@ class SubMenuResource extends JsonResource
     {
         return [
             "id"        => (int) $this->id,
-            "menu"      => (string) $this->menu->name,
+            "menu"      => [
+                "id"    => (int) $this->menu->id,
+                "name"  => (string) $this->menu->name
+            ],
             "name"      => (string) $this->name,
             "icon"      => (string) $this->icon,
             "status"    => (string) $this->status
