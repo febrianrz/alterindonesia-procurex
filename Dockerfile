@@ -1,5 +1,5 @@
 # Accepted values: 8.1 - 8.0
-ARG PHP_VERSION=8.1
+ARG PHP_VERSION=8.2
 
 ARG COMPOSER_VERSION=latest
 
@@ -11,7 +11,7 @@ FROM composer:${COMPOSER_VERSION} AS vendor
 WORKDIR /var/www/html
 COPY composer* ./
 RUN composer install \
-  --no-dev \
+  #--no-dev \
   --no-interaction \
   --prefer-dist \
   --ignore-platform-reqs \
@@ -273,7 +273,7 @@ RUN apt-get clean \
     && rm /var/log/lastlog /var/log/faillog
 
 COPY . .
-#COPY --from=vendor ${ROOT}/vendor vendor
+COPY --from=vendor ${ROOT}/vendor vendor
 
 RUN mkdir -p \
   storage/framework/{sessions,views,cache} \

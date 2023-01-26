@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\GlobalHelper;
 use App\Http\Requests\TestRequest;
+use App\Libraries\Auth;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -19,5 +20,13 @@ class Controller extends BaseController
 
     public function responseError($message,$data=[],$code=400){
         return GlobalHelper::responseError($message,$data,$code);
+    }
+
+    public function can($permissionName) : bool{
+        return Auth::user()->hasPermission($permissionName);
+    }
+
+    public function canWithThrow($permissionName) {
+        if(!$this->can($permissionName)) throw new \Exception("Forbidden",403);
     }
 }

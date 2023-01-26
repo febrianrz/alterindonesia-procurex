@@ -5,6 +5,8 @@ use Carbon\Carbon;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Illuminate\Http\Client\Request;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class Auth extends \Illuminate\Support\Facades\Auth {
 
@@ -38,10 +40,10 @@ class Auth extends \Illuminate\Support\Facades\Auth {
     public static function user(): Auth|\Illuminate\Contracts\Auth\Authenticatable|null
     {
         try {
-            if(self::$instance === null) {
+            if(self::$instance === null && request()->header('Authorization')) {
                 $authorization = str_replace('Bearer ','',request()->header('Authorization'));
-                $jwt = JWT::decode($authorization, new Key(env('PROCUREX_ENCRYPTION_KEY'), 'HS256'));
-                $encryption = new \Illuminate\Encryption\Encrypter( env('PROCUREX_ENCRYPTION_KEY'), 'aes-256-cbc');
+                $jwt = JWT::decode($authorization, new Key(config('procurex.gateway.secret'), 'HS256'));
+                $encryption = new \Illuminate\Encryption\Encrypter( config('procurex.gateway.secret'), 'aes-256-cbc');
                 $now = Carbon::now()->timestamp;
                 if($now > $jwt->expired_at) throw new \Exception("Expired");
                 $payload = $encryption->decrypt($jwt->value);
@@ -64,6 +66,23 @@ class Auth extends \Illuminate\Support\Facades\Auth {
             if($role->name === $roleName) return true;
         }
         return false;
+    }
+
+    public function hasPermission($permissionName) : bool
+    {
+        if(self::isSuperadmin()) return true;
+        $exists = Role::join('role_has_permissions','role_has_permissions.role_id','roles.id')
+            ->join('permissions','permissions.id','role_has_permissions.permission_id')
+            ->where('permissions.name',$permissionName)
+            ->whereIn('roles.name',self::pluckRoleName())
+            ->first();
+        if($exists) return true;
+        return false;
+    }
+
+    public function isSuperadmin() : bool
+    {
+       return (in_array("superadmin",self::pluckRoleName()));
     }
 
     public function pluckRoleName() : array

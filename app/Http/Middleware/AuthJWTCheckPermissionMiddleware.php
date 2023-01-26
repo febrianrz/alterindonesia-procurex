@@ -7,25 +7,22 @@ use App\Libraries\Auth;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Str;
 
-class AuthJWTMiddleware
+class AuthJWTCheckPermissionMiddleware
 {
     /**
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
      */
     public function handle(Request $request, Closure $next)
     {
-        $authorization = $request->header('Authorization');
-        if(
-            !$authorization ||
-            !Str::contains($authorization,['Bearer ']) ||
-            !Auth::check()
-        ) return GlobalHelper::responseError("Unauthorize",[],401);
+        /** Check permission based on action name */
+        $routeName = Route::currentRouteName();
+        if(!Auth::user()->hasPermission($routeName))
+            return GlobalHelper::responseError("Forbidden",[],403);
 
         return $next($request);
     }
