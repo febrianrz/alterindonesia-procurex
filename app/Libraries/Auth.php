@@ -45,7 +45,7 @@ class Auth extends \Illuminate\Support\Facades\Auth {
                 $jwt = JWT::decode($authorization, new Key(config('procurex.gateway.secret'), 'HS256'));
                 $encryption = new \Illuminate\Encryption\Encrypter( config('procurex.gateway.secret'), 'aes-256-cbc');
                 $now = Carbon::now()->timestamp;
-                if($now > $jwt->expired_at) throw new \Exception("Expired");
+                if($now >= $jwt->expired_at) throw new \Exception("Expired");
                 $payload = $encryption->decrypt($jwt->value);
                 self::$instance = new self($payload);
             }

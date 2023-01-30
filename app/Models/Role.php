@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\HasActionTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Role extends Model
 {
-    use HasFactory;
+    use HasFactory, HasActionTrait;
 
     /**
      * The attributes that are mass assignable.
