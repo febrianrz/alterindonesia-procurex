@@ -20,7 +20,8 @@ class UserResource extends JsonResource
             'username'=> $this->username,
             'company_code'=> $this->company_code,
             'status'    => $this->status,
-            'consumer_id'=> $this->consumer_id
+            'consumer_id'=> $this->consumer_id,
+            "action"    => $this->getActions()
         ];
     }
 }

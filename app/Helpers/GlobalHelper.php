@@ -18,29 +18,8 @@ class GlobalHelper {
                 'recordsTotal' => isset($data->toArray()['recordsTotal']) ? $data->toArray()['recordsTotal'] : 0,
                 'recordsFiltered' => isset($data->toArray()['recordsFiltered']) ? $data->toArray()['recordsFiltered'] : 0
             ], $code);
-        } else if($data instanceof JsonResource) {
-            return response()->json([
-                'meta' => [
-                    'message' => $message,
-                    'code' => $code,
-                    'count' => $data->count(),
-                    'total' => $data->total(),
-                    'perPage'=> $data->perPage(),
-                    'currentPage'   => $data->currentPage()
-//                    'prev'  => $data->previousPageUrl(),
-//                    'next'  => $data->nextPageUrl(),
-//
-                ],
-                'data'  => $data
-            ], $code);
-        } else {
-            return response()->json([
-                'meta' => [
-                    'message' => $message,
-                    'code' => $code,
-                ],
-                'data'  => $data
-            ], $code);
+        }  else {
+            return response()->json($data);
         }
     }
 
