@@ -18,7 +18,15 @@ class GlobalHelper {
                 'recordsTotal' => isset($data->toArray()['recordsTotal']) ? $data->toArray()['recordsTotal'] : 0,
                 'recordsFiltered' => isset($data->toArray()['recordsFiltered']) ? $data->toArray()['recordsFiltered'] : 0
             ], $code);
-        }  else {
+        }  else if(is_array($data) || is_object($data)) {
+            return response()->json([
+                'meta'  => [
+                    'message'   => $message,
+                    'code'      => $code,
+                ],
+                'data'      => $data
+            ]);
+        } else {
             return response()->json($data);
         }
     }
