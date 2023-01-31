@@ -18,7 +18,6 @@ class RoleResource extends JsonResource
             "id"            => (int) $this->id,
             "name"          => (string) $this->name,
             "guard_name"    => (string) $this->guard_name,
-            "action"    => $this->getActions()
         ];
     }
 }

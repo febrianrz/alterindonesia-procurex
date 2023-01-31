@@ -3,7 +3,10 @@
 
 namespace App\Services\MasterData;
 
+use App\Http\Resources\ModuleResource;
+use App\Http\Resources\AnonymousCollection;
 use App\Libraries\Auth;
+use App\Models\Module;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -20,6 +23,11 @@ class MasterDataServiceEloquent implements MasterDataServiceInterface
      * @var mixed|string
      */
     protected mixed $resource;
+
+    /**
+     * @var int
+     */
+    protected $perPage = 15;
 
     /**
      * @var array
@@ -39,7 +47,8 @@ class MasterDataServiceEloquent implements MasterDataServiceInterface
             "status"    => true,
             "code"      => JsonResponse::HTTP_OK,
             "message"   => __("master_data.get"),
-            "data"      => []
+            "data"      => [],
+            "resource"  => $this->resource
         ];
     }
 
@@ -49,7 +58,8 @@ class MasterDataServiceEloquent implements MasterDataServiceInterface
     public function list(): array
     {
         // get data module with paginate format
-        $this->result["data"] = $this->resource::collection($this->model->paginate())->response()->getData();
+        $this->result["data"] = $this->model->paginate();
+//        $this->result["data"] = $this->resource::collection($this->model->paginate())->response()->getData();
 
         // return result
         return $this->result;

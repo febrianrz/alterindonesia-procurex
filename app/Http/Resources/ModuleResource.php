@@ -2,10 +2,14 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\Traits\WithMeta;
+use App\Libraries\Auth;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ModuleResource extends JsonResource
 {
+
+    use WithMeta;
     /**
      * Transform the resource into an array.
      *
@@ -19,7 +23,15 @@ class ModuleResource extends JsonResource
             "name"      => (string) $this->name,
             "icon"      => (string) $this->icon,
             "status"    => (string) $this->status,
-            "action"    => $this->getActions()
+            "action"    => [
+                "edit"  => Auth::user()->can("update") ? route('api.module.update', $this->id) : null,
+                "delete"=> Auth::user()->can("destroy") ? route('api.module.destroy', $this->id) : null,
+            ],
         ];
     }
+
+
+
+
+
 }

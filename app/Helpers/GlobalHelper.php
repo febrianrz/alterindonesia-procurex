@@ -1,24 +1,19 @@
 <?php
 namespace App\Helpers;
 
+use App\Http\Resources\AnonymousCollection;
 use http\Client\Response;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Yajra\DataTables\DataTableAbstract;
 
 class GlobalHelper {
-    public static function responseSuccess($message,$data=null,$code=200): \Illuminate\Http\JsonResponse
+    public static function responseSuccess($message,$data=null,$code=200, $resource=null)
     {
-        if($data instanceof DataTableAbstract){
-            return response()->json([
-                'meta' => [
-                    'message' => $message,
-                    'code' => $code,
-                ],
-                'draw' => isset($data->toArray()['draw']) ? $data->toArray()['draw'] : 0,
-                'recordsTotal' => isset($data->toArray()['recordsTotal']) ? $data->toArray()['recordsTotal'] : 0,
-                'recordsFiltered' => isset($data->toArray()['recordsFiltered']) ? $data->toArray()['recordsFiltered'] : 0
-            ], $code);
-        }  else if(is_array($data) || is_object($data)) {
+        if($resource){
+            return new AnonymousCollection(
+                $data, $resource
+            );
+        } else if(is_array($data) || is_object($data)) {
             return response()->json([
                 'meta'  => [
                     'message'   => $message,
