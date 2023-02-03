@@ -34,6 +34,9 @@ class ModuleServiceEloquent extends MasterDataServiceEloquent
             "name"          => $request->name,
             "icon"          => $request->icon,
             "status"        => $request->status,
+            "path"          => $request->path,
+            "is_show_on_dashboard" => boolval($request->is_show_on_dashboard),
+            "order_no"      => $request->order_no,
             "created_by"    => Auth::user()->id
         ];
     }
@@ -49,6 +52,9 @@ class ModuleServiceEloquent extends MasterDataServiceEloquent
         $model->name = $request->name;
         $model->icon = $request->icon;
         $model->status = $request->status;
+        $model->path = $request->path;
+        $model->is_show_on_dashboard = $request->is_show_on_dashboard;
+        $model->order_no = $request->order_no;
         $model->updated_by = Auth::user()->id;
 
         return $model;
