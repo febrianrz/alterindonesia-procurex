@@ -102,4 +102,12 @@ class Auth extends \Illuminate\Support\Facades\Auth {
         }
         return $roles;
     }
+
+    public function id(): int {
+        return $this->id;
+    }
+
+    public function can($permissionName): bool {
+        return true;
+    }
 }

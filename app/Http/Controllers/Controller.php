@@ -14,8 +14,8 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public function responseSuccess($message,$data=[],$code=200){
-        return GlobalHelper::responseSuccess($message,$data,$code);
+    public function responseSuccess($message,$data=[],$code=200,$resource=null){
+        return GlobalHelper::responseSuccess($message,$data,$code,$resource);
     }
 
     public function responseError($message,$data=[],$code=400){

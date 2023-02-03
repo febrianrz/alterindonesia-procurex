@@ -21,7 +21,6 @@ class UserResource extends JsonResource
             'company_code'=> $this->company_code,
             'status'    => $this->status,
             'consumer_id'=> $this->consumer_id,
-            "action"    => $this->getActions()
         ];
     }
 }

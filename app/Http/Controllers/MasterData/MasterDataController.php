@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\MasterData;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ModuleResource;
+use App\Http\Resources\AnonymousCollection;
+use App\Models\Module;
 use App\Services\MasterData\MasterDataServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -31,13 +34,13 @@ class MasterDataController extends Controller
      *
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index()
     {
         // get data menu
         $result = $this->service->list();
 
         // return success response
-        return $this->responseSuccess($result["message"], $result["data"]);
+        return $this->responseSuccess($result["message"], $result["data"], 200, $result["resource"]);
     }
 
     /**
