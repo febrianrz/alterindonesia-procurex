@@ -28,7 +28,10 @@ class ModuleRequest extends FormRequest
         return [
             "name" => "required|string|min:3|max:50|".static::REGEX_RULES,
             "icon" => "present|string|nullable|max:50|".static::REGEX_RULES,
-            "status" => "required|string|in:ACTIVE,INACTIVE"
+            "status" => "required|string|in:ACTIVE,INACTIVE",
+            "path"  => "required|string|max:50",
+            "is_show_on_dashboard"=> "required|boolean",
+            "order_no"=> "nullable|numeric|max:126"
         ];
     }
 }
