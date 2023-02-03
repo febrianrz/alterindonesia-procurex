@@ -23,6 +23,9 @@ class ModuleResource extends JsonResource
             "name"      => (string) $this->name,
             "icon"      => (string) $this->icon,
             "status"    => (string) $this->status,
+            "path"      => (string) $this->path,
+            "order_no"  => (int) $this->order_no,
+            "is_show_on_dashboard"=> (boolean) $this->is_show_on_dashboard,
             "action"    => [
                 "edit"  => Auth::user()->can("update") ? route('api.module.update', $this->id) : null,
                 "delete"=> Auth::user()->can("destroy") ? route('api.module.destroy', $this->id) : null,
