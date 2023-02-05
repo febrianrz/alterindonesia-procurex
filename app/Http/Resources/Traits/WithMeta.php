@@ -16,7 +16,8 @@ trait WithMeta
             'meta' => [
                 'message' => 'Success',
                 'code' => $this->code,
-                'create'=> Auth::user()->can($routeName) ? route($routeName) : null
+                // 'create'=> Auth::user()->can($routeName) ? route($routeName) : null
+                'create'    => true
             ],
         ];
     }

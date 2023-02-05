@@ -3,11 +3,14 @@
 
 namespace App\Services\MasterData\ModuleManagement;
 
+use App\Http\Resources\MenuResource;
 use App\Http\Resources\ModuleResource;
 use App\Libraries\Auth;
+use App\Models\Menu;
 use App\Models\Module;
 use App\Services\MasterData\MasterDataServiceEloquent;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 
 class ModuleServiceEloquent extends MasterDataServiceEloquent
@@ -58,5 +61,14 @@ class ModuleServiceEloquent extends MasterDataServiceEloquent
         $model->updated_by = Auth::user()->id;
 
         return $model;
+    }
+
+    public function getMenu(Model $model): Array{
+        $menus = Menu::where('module_id',$model->id)->get();
+        return [
+            'data' => $menus,
+            'message'=> __("Success"),
+            'resource'=> MenuResource::class
+        ];
     }
 }

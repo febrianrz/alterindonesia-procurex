@@ -18,4 +18,8 @@ class Module extends Model
      * @var array
      */
     protected $fillable = ["name", "icon", "status", "path", "is_show_on_dashboard", "order_no", "created_by", "updated_by"];
+
+    public function menus() {
+        return $this->hasMany(Menu::class,"module_id");
+    }
 }
