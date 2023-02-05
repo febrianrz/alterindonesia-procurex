@@ -35,7 +35,9 @@ class MenuServiceEloquent extends MasterDataServiceEloquent
             "name"          => $request->name,
             "icon"          => $request->icon,
             "status"        => $request->status,
-            "created_by"    => Auth::user()->id
+            "created_by"    => Auth::user()->id,
+            "path"          => $request->path,
+            "order_no"      => $request->order_no
         ];
     }
 
@@ -52,6 +54,8 @@ class MenuServiceEloquent extends MasterDataServiceEloquent
         $model->icon = $request->icon;
         $model->status = $request->status;
         $model->updated_by = Auth::user()->id;
+        $model->path = $request->path;
+        $model->order_no = $request->order_no;
 
         return $model;
     }

@@ -17,7 +17,7 @@ class Menu extends Model
      *
      * @var array
      */
-    protected $fillable = ["module_id", "name", "icon", "status", "created_by", "updated_by"];
+    protected $fillable = ["module_id", "name", "icon", "status", "created_by", "updated_by", "order_no", "path"];
 
     public function module()
     {

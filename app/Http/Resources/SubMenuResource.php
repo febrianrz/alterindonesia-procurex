@@ -23,6 +23,8 @@ class SubMenuResource extends JsonResource
             "name"      => (string) $this->name,
             "icon"      => (string) $this->icon,
             "status"    => (string) $this->status,
+            "path"      => (string) $this->path,
+            "order_no"  => (int) $this->order_no
         ];
     }
 }

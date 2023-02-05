@@ -17,7 +17,7 @@ class SubMenu extends Model
      *
      * @var array
      */
-    protected $fillable = ["menu_id", "name", "icon", "status", "created_by", "updated_by"];
+    protected $fillable = ["menu_id", "name", "icon", "status", "created_by", "updated_by", "order_no", "path"];
 
     public function menu()
     {

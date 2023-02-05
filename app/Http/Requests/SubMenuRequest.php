@@ -37,7 +37,9 @@ class SubMenuRequest extends FormRequest
             ],
             "name" => "required|string|min:3|max:50|".static::REGEX_RULES,
             "icon" => "present|string|nullable|max:50|".static::REGEX_RULES,
-            "status" => "required|string|in:ACTIVE,INACTIVE"
+            "status" => "required|string|in:ACTIVE,INACTIVE",
+            "path"  => "required|string|max:50",
+            "order_no"  => "nullable",
         ];
     }
 }
