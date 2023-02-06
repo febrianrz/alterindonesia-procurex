@@ -35,7 +35,10 @@ class ModuleController extends MasterDataController
 
     public function getMenu(string $module_path) 
     {
-        $result = $this->service->getMenu(Module::where('path',"/".$module_path)->firstOrFail());
+        $module = Module::where('path',"/".$module_path)->first();
+        /** Jika module path tidak ada, maka ambil main path */
+        $module = !$module ? Module::where('path','/')->first() : $module;
+        $result = $this->service->getMenu($module);
 
         // return success response
         return $this->responseSuccess($result["message"], $result["data"], 200, $result["resource"]);

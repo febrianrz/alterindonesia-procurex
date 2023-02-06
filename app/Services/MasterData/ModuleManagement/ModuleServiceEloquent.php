@@ -64,7 +64,10 @@ class ModuleServiceEloquent extends MasterDataServiceEloquent
     }
 
     public function getMenu(Model $model): Array{
-        $menus = Menu::where('module_id',$model->id)->get();
+        $menus = Menu::where('module_id',$model->id)
+            ->where('status',Menu::STATUS_ACTIVE)
+            ->orderBy('order_no','asc')
+            ->get();
         return [
             'data' => $menus,
             'message'=> __("Success"),
