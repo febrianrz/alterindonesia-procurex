@@ -33,7 +33,7 @@ class ModuleController extends MasterDataController
         return parent::updateData($id);
     }
 
-    public function getMenu(string $module_path) 
+    public function getMenu(string $module_path)
     {
         $module = Module::where('path',"/".$module_path)->first();
         /** Jika module path tidak ada, maka ambil main path */

@@ -3,6 +3,7 @@
 
 namespace App\Services\MasterData;
 
+use App\Helpers\Filters\FilterDate;
 use App\Http\Resources\ModuleResource;
 use App\Http\Resources\AnonymousCollection;
 use App\Libraries\Auth;
@@ -11,6 +12,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use PHPUnit\Util\Filter;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class MasterDataServiceEloquent implements MasterDataServiceInterface
 {
@@ -57,9 +61,26 @@ class MasterDataServiceEloquent implements MasterDataServiceInterface
      */
     public function list(): array
     {
-        // get data module with paginate format
-        $this->result["data"] = $this->model->paginate();
-//        $this->result["data"] = $this->resource::collection($this->model->paginate())->response()->getData();
+        $request = app(Request::class);
+
+        $this->result["data"] = QueryBuilder::for($this->model)
+            ->allowedFields('id', ...$this->model->getFillable())
+            ->allowedFilters([
+                'name',
+                'icon',
+                AllowedFilter::exact('status'),
+                'path',
+                'is_show_on_dashboard',
+                'order_no',
+                AllowedFilter::custom('created_at', new FilterDate()),
+                AllowedFilter::custom('updated_at', new FilterDate()),
+                AllowedFilter::trashed(),
+                'menus.name'
+            ])
+            ->defaultSort('id')
+            ->allowedSorts($this->model->getFillable())
+            ->allowedIncludes(['menus'])
+            ->paginate($request->query('perPage'));
 
         // return result
         return $this->result;

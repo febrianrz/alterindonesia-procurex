@@ -16,6 +16,7 @@
         "laravel/sanctum": "^3.0",
         "laravel/telescope": "^4.11",
         "laravel/tinker": "^2.7",
+        "spatie/laravel-query-builder": "^5.1",
         "spiral/roadrunner": "^2.8.2",
         "stephenjude/filament-debugger": "^0.1.0",
         "yajra/laravel-datatables-oracle": "^10.0"
