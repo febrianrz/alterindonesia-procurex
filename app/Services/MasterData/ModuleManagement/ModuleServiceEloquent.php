@@ -23,7 +23,12 @@ class ModuleServiceEloquent extends MasterDataServiceEloquent
      */
     public function __construct(Module $model, $resource = ModuleResource::class)
     {
-        parent::__construct($model, $resource);
+        parent::__construct(
+            $model,
+            $resource,
+            ['menus.name'],
+            ['menus']
+        );
     }
 
     /**

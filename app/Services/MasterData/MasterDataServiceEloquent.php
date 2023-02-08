@@ -39,14 +39,31 @@ class MasterDataServiceEloquent implements MasterDataServiceInterface
     protected array $result;
 
     /**
+     * @var array Allowed Filter Search
+     */
+    protected array $allowedFilter = [];
+
+    /**
+     * @var array include relation
+     */
+    protected array $allowedIncludes = [];
+
+    /**
      * MasterDataServiceEloquent constructor.
      * @param Model $model
      * @param string $resource
      */
-    public function __construct(Model $model, $resource = JsonResource::class)
+    public function __construct(
+        Model $model,
+        $resource = JsonResource::class,
+        $allowedFilter = [],
+        $allowedIncludes = [],
+    )
     {
         $this->model = $model;
         $this->resource = $resource;
+        $this->allowedFilter = $allowedFilter;
+        $this->allowedIncludes = $allowedIncludes;
         $this->result = [
             "status"    => true,
             "code"      => JsonResponse::HTTP_OK,
@@ -65,24 +82,27 @@ class MasterDataServiceEloquent implements MasterDataServiceInterface
 
         $this->result["data"] = QueryBuilder::for($this->model)
             ->allowedFields('id', ...$this->model->getFillable())
-            ->allowedFilters([
-                'name',
-                'icon',
-                AllowedFilter::exact('status'),
-                'path',
-                'is_show_on_dashboard',
-                'order_no',
+            ->allowedFilters(
                 AllowedFilter::custom('created_at', new FilterDate()),
                 AllowedFilter::custom('updated_at', new FilterDate()),
-                AllowedFilter::trashed(),
-                'menus.name'
-            ])
-            ->defaultSort('id')
+//                AllowedFilter::trashed(),
+                ...$this->model->getFillable(),
+                ...$this->allowedFilter,
+            )
+//            ->allowedFilters(
+//                'name',
+//                'icon',
+//                AllowedFilter::exact('status'),
+//                'path',
+//                'is_show_on_dashboard',
+//                'order_no',
+//                'menus.name'
+//            )
+            ->defaultSort($this->model->getKeyName())
             ->allowedSorts($this->model->getFillable())
-            ->allowedIncludes(['menus'])
-            ->paginate($request->query('perPage'));
+            ->allowedIncludes($this->allowedIncludes)
+            ->paginate($request->query('perPage')??15);
 
-        // return result
         return $this->result;
     }
 
