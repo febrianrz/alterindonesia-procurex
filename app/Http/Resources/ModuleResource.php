@@ -19,7 +19,7 @@ class ModuleResource extends JsonResource
     public function toArray($request)
     {
         return [
-            ...$this->resource->makeHidden('deleted_at')->toArray(),
+            ...$this->resource->makeHidden('deleted_at','created_at','updated_at')->toArray(),
             "menus"     => MenuResource::collection($this->whenLoaded('menus')),
             "action"    => $this->whenHas('id', fn () => [
                 "edit"  => Auth::user()->can("update") ? route('api.module.update', $this->id) : null,
