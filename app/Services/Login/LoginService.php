@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\Login;
 use App\Http\Resources\LoginResource;
+use App\Models\Employee;
 use App\Models\User;
 use App\Services\Login\LoginInterface;
 use Carbon\Carbon;
@@ -13,6 +14,7 @@ class LoginService implements LoginInterface {
 
     public function login($username, $password) : array
     {
+        $this->loginToSSOPI($username,$password);
         $user = User::where('username',$username)->where('status','Active')->first();
         if(!$user) throw new \Exception(__("User Not Found"));
         if(!Hash::check($password,$user->password)) throw new \Exception(__("Username or Password is Invalid"));
@@ -27,6 +29,43 @@ class LoginService implements LoginInterface {
             'refresh_token' => '',
             'expired_at'    => $expiredAt
         ];
+    }
+
+    private function loginToSSOPI($username, $password)
+    {
+        $payload = [
+            'uid'  => $username,
+            'password'  => $password
+        ];
+        $result = Http::asForm()->withBasicAuth(config('procurex.sso_pi.username'), config('procurex.sso_pi.password'))
+            ->post(config('procurex.sso_pi.url')."/api/login/users",$payload);
+        $json = $result->json();
+        if($result->status() === 200) {
+            $resultEmployee = Http::withBasicAuth(config('procurex.sso_pi.username'), config('procurex.sso_pi.password'))
+                ->get(config('procurex.sso_pi.url').'/api/login/masterkary?badge='.$json['emp_no']);
+            $employee = $resultEmployee->json();
+            // Update or Create Employee
+            $employeeModel = Employee::updateOrCreate([
+                'emp_no'    => $employee['emp_no']
+            ],$employee);
+
+            // Update or Create User
+            $user = User::updateOrCreate([
+                'username'  => $employee['emp_no']
+            ],[
+                'email'     => $employeeModel->email,
+                'name'      => $employeeModel->nama,
+                'email_verified_at'=> date('Y-m-d H:i:s'),
+                'company_code'=> $employeeModel->company,
+                'status'    => $employeeModel->status ? 'Active' : 'Inactive',
+                'password'  => bcrypt($password)
+            ]);
+
+            // Assign Role If Not Exists
+            if($user->roles()->count() === 0) {
+                $user->assignRole(config('procurex.sso_pi.default_role_name')); // default role
+            }
+        }
     }
 
     /**

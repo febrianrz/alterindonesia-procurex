@@ -37,6 +37,13 @@ class UserSeeder extends Seeder
             'guard_name'=> 'web'
         ]);
 
+        Role::updateOrCreate([
+            'id'    => '2'
+        ],[
+            'name'  => 'staff',
+            'guard_name'=> 'web'
+        ]);
+
         $user->assignRole('superadmin');
     }
 }
