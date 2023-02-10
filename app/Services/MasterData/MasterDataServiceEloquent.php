@@ -48,6 +48,9 @@ class MasterDataServiceEloquent implements MasterDataServiceInterface
      */
     protected array $allowedIncludes = [];
 
+
+    protected array $allowedSorts = [];
+
     /**
      * MasterDataServiceEloquent constructor.
      * @param Model $model
@@ -58,12 +61,14 @@ class MasterDataServiceEloquent implements MasterDataServiceInterface
         $resource = JsonResource::class,
         $allowedFilter = [],
         $allowedIncludes = [],
+        $allowedSorts = []
     )
     {
         $this->model = $model;
         $this->resource = $resource;
         $this->allowedFilter = $allowedFilter;
         $this->allowedIncludes = $allowedIncludes;
+        $this->allowedSorts = $allowedSorts;
         $this->result = [
             "status"    => true,
             "code"      => JsonResponse::HTTP_OK,
@@ -79,7 +84,6 @@ class MasterDataServiceEloquent implements MasterDataServiceInterface
     public function list(): array
     {
         $request = app(Request::class);
-
         $this->result["data"] = QueryBuilder::for($this->model)
             ->allowedFields('id', ...$this->model->getFillable())
             ->allowedFilters(
@@ -99,7 +103,10 @@ class MasterDataServiceEloquent implements MasterDataServiceInterface
 //                'menus.name'
 //            )
             ->defaultSort($this->model->getKeyName())
-            ->allowedSorts($this->model->getFillable())
+            ->allowedSorts(
+                ...$this->allowedSorts,
+                ...$this->model->getFillable()
+            )
             ->allowedIncludes($this->allowedIncludes)
             ->paginate($request->query('perPage')??15);
 

@@ -27,7 +27,8 @@ class ModuleServiceEloquent extends MasterDataServiceEloquent
             $model,
             $resource,
             ['menus.name'],
-            ['menus','menus.submenus']
+            ['menus','menus.submenus'],
+            ['menus.name','menus.order_no','menus.submenus.name','menus.submenus.order_no']
         );
     }
 
