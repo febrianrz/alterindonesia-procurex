@@ -26,6 +26,6 @@ class Module extends Model
     ];
 
     public function menus() {
-        return $this->hasMany(Menu::class,"module_id");
+        return $this->hasMany(Menu::class,"module_id")->orderBy('order_no','asc');
     }
 }
