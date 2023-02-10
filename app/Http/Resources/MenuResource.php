@@ -26,6 +26,7 @@ class MenuResource extends JsonResource
             "status"    => (string) $this->status,
             "path"      => (string) $this->path,
             "order_no"  => (int) $this->order_no,
+            "menus"     => SubMenuResource::collection($this->whenLoaded('submenus')),
             "action"    => $this->whenHas('id', fn () => [
                 "edit"  => Auth::user()->can("update") ? route('api.module.update', $this->id) : null,
                 "delete"=> Auth::user()->can("destroy") ? route('api.module.destroy', $this->id) : null,
