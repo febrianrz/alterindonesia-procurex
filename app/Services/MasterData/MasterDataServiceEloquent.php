@@ -4,15 +4,10 @@
 namespace App\Services\MasterData;
 
 use App\Helpers\Filters\FilterDate;
-use App\Http\Resources\ModuleResource;
-use App\Http\Resources\AnonymousCollection;
-use App\Libraries\Auth;
-use App\Models\Module;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use PHPUnit\Util\Filter;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -24,14 +19,14 @@ class MasterDataServiceEloquent implements MasterDataServiceInterface
     protected Model $model;
 
     /**
-     * @var mixed|string
+     * @var string
      */
-    protected mixed $resource;
+    protected string $resource;
 
     /**
      * @var int
      */
-    protected $perPage = 15;
+    protected int $perPage = 15;
 
     /**
      * @var array
@@ -41,34 +36,35 @@ class MasterDataServiceEloquent implements MasterDataServiceInterface
     /**
      * @var array Allowed Filter Search
      */
-    protected array $allowedFilter = [];
+    protected array $defaultAllowedFilter = [];
 
     /**
      * @var array include relation
      */
-    protected array $allowedIncludes = [];
+    protected array $defaultAllowedIncludes = [];
 
-
-    protected array $allowedSorts = [];
+    /**
+     * @var array  Allowed Sort
+     */
+    protected array $defaultAllowedSorts = [];
 
     /**
      * MasterDataServiceEloquent constructor.
      * @param Model $model
      * @param string $resource
      */
-    public function __construct(
-        Model $model,
-        $resource = JsonResource::class,
-        $allowedFilter = [],
-        $allowedIncludes = [],
-        $allowedSorts = []
-    )
+    public function __construct(Model $model, string $resource = JsonResource::class)
     {
+        // Initiation
         $this->model = $model;
         $this->resource = $resource;
-        $this->allowedFilter = $allowedFilter;
-        $this->allowedIncludes = $allowedIncludes;
-        $this->allowedSorts = $allowedSorts;
+
+        // set spatie query builder params
+        $this->defaultAllowedFilter = [];
+        $this->defaultAllowedIncludes = [];
+        $this->defaultAllowedSorts = [];
+
+        // set default result
         $this->result = [
             "status"    => true,
             "code"      => JsonResponse::HTTP_OK,
@@ -79,36 +75,27 @@ class MasterDataServiceEloquent implements MasterDataServiceInterface
     }
 
     /**
+     * @param Request $request
      * @return array
      */
-    public function list(): array
+    public function list(Request $request): array
     {
-        $request = app(Request::class);
         $this->result["data"] = QueryBuilder::for($this->model)
             ->allowedFields('id', ...$this->model->getFillable())
             ->allowedFilters(
                 AllowedFilter::custom('created_at', new FilterDate()),
                 AllowedFilter::custom('updated_at', new FilterDate()),
-//                AllowedFilter::trashed(),
+                AllowedFilter::trashed(),
                 ...$this->model->getFillable(),
-                ...$this->allowedFilter,
+                ...$this->defaultAllowedFilter,
             )
-//            ->allowedFilters(
-//                'name',
-//                'icon',
-//                AllowedFilter::exact('status'),
-//                'path',
-//                'is_show_on_dashboard',
-//                'order_no',
-//                'menus.name'
-//            )
             ->defaultSort($this->model->getKeyName())
             ->allowedSorts(
-                ...$this->allowedSorts,
+                ...$this->defaultAllowedSorts,
                 ...$this->model->getFillable()
             )
-            ->allowedIncludes($this->allowedIncludes)
-            ->paginate($request->query('perPage')??15);
+            ->allowedIncludes($this->defaultAllowedIncludes)
+            ->paginate($request->query('perPage') ?? $this->perPage);
 
         return $this->result;
     }
@@ -137,15 +124,18 @@ class MasterDataServiceEloquent implements MasterDataServiceInterface
      * @param string $id
      * @return array
      */
-    public function detail(string $id): array
+    public function detail(string $id, array $relationship = []): array
     {
         // find data by id
-        $data = $this->find($id);
+        $data = $this->model->with($relationship)
+            ->where("id", "=", $id)
+            ->get();
 
         // check data existence
-        if (!is_null($data)) {
+        if (!$data->isEmpty()) {
             // set success result
-            $this->result["data"] = new $this->resource($data);
+            $this->result["data"] = $data;
+            $this->result["resource"] = $this->resource;
         } else {
             // set failed result
             $this->result["status"] = false;
@@ -262,6 +252,7 @@ class MasterDataServiceEloquent implements MasterDataServiceInterface
     }
 
     /**
+     * @param Model $model
      * @param Request $request
      * @return Model
      */

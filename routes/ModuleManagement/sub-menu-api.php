@@ -8,6 +8,6 @@ Route::controller(SubMenuController::class)->prefix("sub_menu")->group(function 
     Route::post("/", "store")->name("api.sub_menu.store");
     Route::get(ID, "show")->name("api.sub_menu.show");
     Route::put(ID, "update")->name("api.sub_menu.update");
-    Route::delete(ID, "destroy")->name("api.sub_menu.delete");
+    Route::delete(ID, "destroy")->name("api.sub_menu.destroy");
     Route::put(RESTORE_PATH, "restore")->name("api.sub_menu.restore");
 });

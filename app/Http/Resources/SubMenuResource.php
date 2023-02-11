@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Libraries\Auth;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class SubMenuResource extends JsonResource
@@ -24,7 +25,29 @@ class SubMenuResource extends JsonResource
             "icon"      => (string) $this->icon,
             "status"    => (string) $this->status,
             "path"      => (string) $this->path,
-            "order_no"  => (int) $this->order_no
+            "order_no"  => (int) $this->order_no,
+            "action"    => $this->whenHas(
+                'id',
+                function () use ($request) {
+                    // set action
+                    $action = [
+                        "edit"  => Auth::user()->can("update") ? route('api.sub_menu.update', $this->id) : null,
+                        "delete"=> Auth::user()->can("destroy") ? route('api.sub_menu.destroy', $this->id) : null,
+                        "restore"  => Auth::user()->can("destroy") ? route('api.sub_menu.restore', $this->id) : null
+                    ];
+
+                    // check if trashed resource
+                    if ($request->has("filter")
+                        && array_key_exists("trashed", $request->filter)
+                    ) {
+                        unset($action["delete"]);
+                    } else {
+                        unset($action["restore"]);
+                    }
+
+                    return $action;
+                }
+            )
         ];
     }
 }

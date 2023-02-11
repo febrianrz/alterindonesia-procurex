@@ -6,11 +6,11 @@ use Illuminate\Http\Request;
 
 interface MasterDataServiceInterface
 {
-    public function list();
+    public function list(Request $request);
 
     public function create(Request $request);
 
-    public function detail(string $id);
+    public function detail(string $id, array $relationship = []);
 
     public function update(string $id, Request $request);
 

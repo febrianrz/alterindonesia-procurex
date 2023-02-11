@@ -10,6 +10,5 @@ Route::controller(ModuleController::class)->prefix("module")->group(function () 
     Route::put(ID, "update")->name("api.module.update");
     Route::delete(ID, "destroy")->name("api.module.destroy");
     Route::put(RESTORE_PATH, "restore")->name("api.module.restore");
-
-    Route::get("/menu-list/{module_path}","getMenu")->name("api.module.menu");
+    Route::get("/menu-list/{modulePath}", "getMenuByModulePath")->name("api.module.menu");
 });

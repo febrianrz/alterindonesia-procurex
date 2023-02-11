@@ -2,36 +2,36 @@
 namespace App\Helpers;
 
 use App\Http\Resources\AnonymousCollection;
-use http\Client\Response;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Yajra\DataTables\DataTableAbstract;
+use Illuminate\Http\JsonResponse;
 
-class GlobalHelper {
-    public static function responseSuccess($message,$data=null,$code=200, $resource=null)
+class GlobalHelper
+{
+    public static function responseSuccess($message, $data=null, $code=200, $resource=null)
     {
-        if($resource){
+        if ($resource) {
             return new AnonymousCollection(
-                $data, $resource
+                $data,
+                $resource
             );
-        } else if(is_array($data) || is_object($data)) {
+        } elseif (is_array($data) || is_object($data)) {
             return response()->json([
                 'meta'  => [
                     'message'   => $message,
                     'code'      => $code,
                 ],
                 'data'      => $data
-            ]);
+            ], $code);
         } else {
             return response()->json($data);
         }
     }
 
-    public static function responseError($message,$data=[],$code=400): \Illuminate\Http\JsonResponse
+    public static function responseError($message, $data=[], $code=400): JsonResponse
     {
-        if($code == 401) {
+        if ($code == 401) {
             return response()->json([
                 'message'   => 'Unauthenticated'
-            ],$code);
+            ], $code);
         }
         $meta = [
             'message'   => $message instanceof \Exception ? $message->getMessage() : $message,
@@ -43,6 +43,6 @@ class GlobalHelper {
         return response()->json([
             'meta'   => $meta,
             'data'  => $data
-        ],$code);
+        ], $code);
     }
 }

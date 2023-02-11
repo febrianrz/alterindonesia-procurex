@@ -5,7 +5,6 @@ namespace App\Http\Controllers\MasterData\ModuleManagement;
 use App\Http\Controllers\MasterData\MasterDataController;
 use App\Http\Requests\ModuleRequest;
 use App\Http\Resources\AnonymousCollection;
-use App\Models\Module;
 use Illuminate\Http\JsonResponse;
 
 class ModuleController extends MasterDataController
@@ -33,14 +32,21 @@ class ModuleController extends MasterDataController
         return parent::updateData($id);
     }
 
-    public function getMenu(string $module_path)
+    /**
+     * @param string $modulePath
+     * @return JsonResponse|AnonymousCollection
+     */
+    public function getMenuByModulePath(string $modulePath): JsonResponse|AnonymousCollection
     {
-        $module = Module::where('path',"/".$module_path)->first();
-        /** Jika module path tidak ada, maka ambil main path */
-        $module = !$module ? Module::where('path','/')->first() : $module;
-        $result = $this->service->getMenu($module);
+        // find menu by module path
+        $result = $this->service->getMenuByModulePath($modulePath);
+
+        // check result
+        if (!$result["status"]) {
+            return $this->responseError($result["message"], $result["data"], $result["code"]);
+        }
 
         // return success response
-        return $this->responseSuccess($result["message"], $result["data"], 200, $result["resource"]);
+        return $this->responseSuccess($result["message"], $result["data"], JsonResponse::HTTP_OK, $result["resource"]);
     }
 }

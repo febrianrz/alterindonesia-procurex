@@ -13,10 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('modules', function (Blueprint $table){
-            $table->string("path")->nullable();
-            $table->boolean("is_show_on_dashboard")->default(true);
-            $table->tinyInteger("order_no")->default(0);
+        Schema::table('modules', function (Blueprint $table) {
+            $table->string("path")->nullable()->after("icon");
+            $table->boolean("is_show_on_dashboard")->default(true)->after("path");
+            $table->tinyInteger("order_no")->default(0)->after("is_show_on_dashboard");
         });
     }
 
