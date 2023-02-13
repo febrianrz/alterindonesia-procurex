@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Http\Resources\LoginResource;
+use App\Http\Resources\UserResource;
 use App\Libraries\Auth;
 use App\Models\User;
 use App\Services\Login\LoginService;
@@ -35,7 +36,8 @@ class LoginController extends Controller
     public function profile(): \Illuminate\Http\JsonResponse
     {
         try {
-            return $this->responseSuccess("Success",Auth::user());
+            $user = User::findOrFail(Auth::user()->id);
+            return $this->responseSuccess("Success",new LoginResource($user));
         } catch (\Exception $e){
             return $this->responseError($e);
         }

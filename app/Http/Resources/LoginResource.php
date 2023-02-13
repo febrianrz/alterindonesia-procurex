@@ -20,7 +20,8 @@ class LoginResource extends JsonResource
             'username'=> $this->username,
             'email' => $this->email,
             'roles' => LoginRoleResource::collection($this->roles()->get()),
-            'company'=> new LoginCompanyResource($this->company)
+            'company'=> new LoginCompanyResource($this->company),
+            'employee'=> $this->employee
         ];
     }
 }

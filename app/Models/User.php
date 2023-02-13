@@ -58,4 +58,8 @@ class User extends Authenticatable
     public function specificPlanner() {
         return $this->belongsTo(SpecificPlanner::class,'specific_planner_id');
     }
+
+    public function employee(){
+        return $this->belongsTo(Employee::class,'username','emp_no');
+    }
 }

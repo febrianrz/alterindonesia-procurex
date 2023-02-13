@@ -27,6 +27,7 @@ Route::middleware(['log.activity'])->group(function () {
 
     Route::middleware(['auth.jwt'])->group(function () {
         Route::get('/profile', 'App\Http\Controllers\LoginController@profile')->name('api.profile');
+        Route::post('/profile', 'App\Http\Controllers\LoginController@updateProfile')->name('api.update.profile');
         Route::post('/logout', 'App\Http\Controllers\LoginController@logout')->name('api.logout');
 
         # User Management
