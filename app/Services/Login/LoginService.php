@@ -204,4 +204,8 @@ class LoginService implements LoginInterface {
             throw new \Exception($e->getMessage());
         }
     }
+
+    public function roles() {
+        return [];
+    }
 }

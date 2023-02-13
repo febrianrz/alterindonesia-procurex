@@ -38,8 +38,9 @@ class LoginController extends Controller
     public function profile(): \Illuminate\Http\JsonResponse
     {
         try {
-            $user = User::findOrFail(Auth::user()->id);
-            return $this->responseSuccess("Success",new LoginResource($user));
+//            $user = User::findOrFail(Auth::user()->id);
+            $user = Auth::user();
+            return $this->responseSuccess("Success",$user);
         } catch (\Exception $e){
             return $this->responseError($e);
         }

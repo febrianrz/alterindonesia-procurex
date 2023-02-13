@@ -19,6 +19,7 @@ class Auth {
     public ?string $name = null;
     public ?string $company_code = null;
     public ?string $company_name = null;
+    public ?object $employee = null;
     public ?array $roles = [];
     public ?object $companies = null;
 
@@ -31,6 +32,7 @@ class Auth {
         $this->company_name = $user->company?->name;
         $this->roles = $user->roles;
         $this->companies = $user->company;
+        $this->employee = $user->employee;
     }
 
     public static function check(): bool
