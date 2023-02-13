@@ -35,11 +35,11 @@ class MenuRequest extends FormRequest
                     return $query->where("status", "=", Module::STATUS_ACTIVE)->whereNull("deleted_at");
                 })
             ],
-            "name" => "required|string|min:3|max:50|".static::REGEX_RULES,
-            "icon" => "present|string|nullable|max:50|".static::REGEX_RULES,
-            "status" => "required|string|in:ACTIVE,INACTIVE",
-            "path"  => "required|string|max:50",
-            "order_no"  => "nullable",
+            "name"      => "required|string|min:3|max:50|".static::REGEX_RULES,
+            "icon"      => "present|string|nullable|max:50|".static::REGEX_RULES,
+            "path"      => "required|string|max:50",
+            "order_no"  => "nullable|numeric|max:126",
+            "status"    => "required|string|in:ACTIVE,INACTIVE",
         ];
     }
 }

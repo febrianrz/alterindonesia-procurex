@@ -34,10 +34,10 @@ class SubMenuServiceEloquent extends MasterDataServiceEloquent
             "menu_id"       => $request->menu_id,
             "name"          => $request->name,
             "icon"          => $request->icon,
-            "status"        => $request->status,
-            "created_by"    => Auth::user()->id,
             "path"          => $request->path,
-            "order_no"      => $request->order_no
+            "order_no"      => $request->order_no,
+            "status"        => $request->status,
+            "created_by"    => Auth::user()->id
         ];
     }
 
@@ -52,10 +52,10 @@ class SubMenuServiceEloquent extends MasterDataServiceEloquent
         $model->menu_id = $request->menu_id;
         $model->name = $request->name;
         $model->icon = $request->icon;
-        $model->status = $request->status;
-        $model->updated_by = Auth::user()->id;
         $model->path = $request->path;
         $model->order_no = $request->order_no;
+        $model->status = $request->status;
+        $model->updated_by = Auth::user()->id;
 
         return $model;
     }

@@ -17,7 +17,7 @@ class Menu extends Model
      *
      * @var array
      */
-    protected $fillable = ["module_id", "name", "icon", "status", "created_by", "updated_by", "order_no", "path"];
+    protected $fillable = ["module_id", "name", "icon", "order_no", "path", "status", "created_by", "updated_by"];
 
     public function module()
     {
@@ -26,6 +26,6 @@ class Menu extends Model
 
     public function submenus()
     {
-        return $this->hasMany(SubMenu::class)->orderBy('order_no','asc');
+        return $this->hasMany(SubMenu::class)->orderBy('order_no');
     }
 }

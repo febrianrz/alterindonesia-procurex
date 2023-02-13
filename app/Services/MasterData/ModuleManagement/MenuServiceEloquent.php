@@ -21,6 +21,24 @@ class MenuServiceEloquent extends MasterDataServiceEloquent
     public function __construct(Menu $model, $resource = MenuResource::class)
     {
         parent::__construct($model, $resource);
+
+        // set spatie query builder params
+        $this->defaultAllowedFilter = ["submenus.name"];
+        $this->defaultAllowedIncludes = ["submenus"];
+        $this->defaultAllowedSorts = ["submenus.name","submenus.order_no"];
+    }
+
+    /**
+     * @param string $id
+     * @param array $relationship
+     * @return array
+     */
+    public function detail(string $id, array $relationship = []): array
+    {
+        // set relationship
+        $with = ["submenus"];
+
+        return parent::detail($id, $with);
     }
 
     /**
@@ -34,10 +52,10 @@ class MenuServiceEloquent extends MasterDataServiceEloquent
             "module_id"     => $request->module_id,
             "name"          => $request->name,
             "icon"          => $request->icon,
-            "status"        => $request->status,
-            "created_by"    => Auth::user()->id,
             "path"          => $request->path,
-            "order_no"      => $request->order_no
+            "order_no"      => $request->order_no,
+            "status"        => $request->status,
+            "created_by"    => Auth::user()->id
         ];
     }
 
@@ -52,10 +70,10 @@ class MenuServiceEloquent extends MasterDataServiceEloquent
         $model->module_id = $request->module_id;
         $model->name = $request->name;
         $model->icon = $request->icon;
-        $model->status = $request->status;
-        $model->updated_by = Auth::user()->id;
         $model->path = $request->path;
         $model->order_no = $request->order_no;
+        $model->status = $request->status;
+        $model->updated_by = Auth::user()->id;
 
         return $model;
     }

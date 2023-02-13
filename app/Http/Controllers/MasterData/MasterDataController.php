@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\MasterData;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ModuleResource;
 use App\Http\Resources\AnonymousCollection;
-use App\Models\Module;
 use App\Services\MasterData\MasterDataServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,11 +15,16 @@ class MasterDataController extends Controller
      */
     protected MasterDataServiceInterface $service;
 
-    protected $request;
+    /**
+     * @var Request
+     */
+    protected Request $request;
 
     /**
      * MasterDataController constructor.
+     *
      * @param MasterDataServiceInterface $service
+     * @param Request $request
      */
     public function __construct(MasterDataServiceInterface $service, Request $request)
     {
@@ -32,15 +35,16 @@ class MasterDataController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return JsonResponse
+     * @param Request $request
+     * @return AnonymousCollection
      */
-    public function index()
+    public function index(Request $request): AnonymousCollection
     {
         // get data menu
-        $result = $this->service->list();
+        $result = $this->service->list($request);
 
         // return success response
-        return $this->responseSuccess($result["message"], $result["data"], 200, $result["resource"]);
+        return $this->responseSuccess($result["message"], $result["data"], JsonResponse::HTTP_OK, $result["resource"]);
     }
 
     /**
@@ -65,10 +69,10 @@ class MasterDataController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  string  $id
-     * @return JsonResponse
+     * @param string $id
+     * @return JsonResponse|AnonymousCollection
      */
-    public function show(string $id): JsonResponse
+    public function show(string $id): JsonResponse|AnonymousCollection
     {
         // find data menu
         $result = $this->service->detail($id);
@@ -79,7 +83,7 @@ class MasterDataController extends Controller
         }
 
         // return success response
-        return $this->responseSuccess($result["message"], $result["data"]);
+        return $this->responseSuccess($result["message"], $result["data"], JsonResponse::HTTP_OK, $result["resource"]);
     }
 
     /**

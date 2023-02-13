@@ -23,14 +23,32 @@ class MenuResource extends JsonResource
             ],
             "name"      => (string) $this->name,
             "icon"      => (string) $this->icon,
-            "status"    => (string) $this->status,
             "path"      => (string) $this->path,
             "order_no"  => (int) $this->order_no,
-            "submenus"     => SubMenuResource::collection($this->whenLoaded('submenus')),
-            "action"    => $this->whenHas('id', fn () => [
-                "edit"  => Auth::user()->can("update") ? route('api.module.update', $this->id) : null,
-                "delete"=> Auth::user()->can("destroy") ? route('api.module.destroy', $this->id) : null,
-            ]),
+            "status"    => (string) $this->status,
+            "submenus"  => SubMenuResource::collection($this->whenLoaded('submenus')),
+            "action"    => $this->whenHas(
+                'id',
+                function () use ($request) {
+                    // set action
+                    $action = [
+                        "edit"  => Auth::user()->can("update") ? route('api.menu.update', $this->id) : null,
+                        "delete"=> Auth::user()->can("destroy") ? route('api.menu.destroy', $this->id) : null,
+                        "restore"  => Auth::user()->can("destroy") ? route('api.menu.restore', $this->id) : null
+                    ];
+
+                    // check if trashed resource
+                    if ($request->has("filter")
+                        && array_key_exists("trashed", $request->filter)
+                    ) {
+                        unset($action["delete"]);
+                    } else {
+                        unset($action["restore"]);
+                    }
+
+                    return $action;
+                }
+            )
         ];
     }
 }
