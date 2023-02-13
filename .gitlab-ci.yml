@@ -61,4 +61,4 @@ migrate-fresh-seed:
   only:
     - main
   script:
-    - docker exec procurex-sso php artisan migrate:fresh --seed --force
+    - docker exec $(docker ps -a -q --filter ancestor=procurex-sso --format="{{.ID}}") php artisan migrate:fresh --seed --force
