@@ -3,11 +3,10 @@
 namespace App\Providers;
 
 use App\Contracts\RestApiContract;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\MasterData\UserManagement\UserController;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\User\UserService;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -43,6 +42,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->when(\App\Http\Controllers\MasterData\UserManagement\PermissionController::class)
             ->needs(\App\Services\MasterData\MasterDataServiceInterface::class)
             ->give(\App\Services\MasterData\UserManagement\PermissionServiceEloquent::class);
+
+        // User Binding
+        $this->app->when(\App\Http\Controllers\MasterData\UserManagement\UserController::class)
+            ->needs(\App\Services\MasterData\MasterDataServiceInterface::class)
+            ->give(\App\Services\MasterData\UserManagement\UserServiceEloquent::class);
         # End User Management
 
         # Start Module Management

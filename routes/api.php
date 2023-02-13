@@ -36,6 +36,7 @@ Route::middleware(['log.activity'])->group(function () {
         # User Management
         require __DIR__."/UserManagement/role-api.php";
         require __DIR__."/UserManagement/permission-api.php";
+        require __DIR__."/UserManagement/user-api.php";
 
         # Module Management
         require __DIR__."/ModuleManagement/module-api.php";
