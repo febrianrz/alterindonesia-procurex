@@ -38,9 +38,20 @@ class LoginController extends Controller
     public function profile(): \Illuminate\Http\JsonResponse
     {
         try {
-//            $user = User::findOrFail(Auth::user()->id);
             $user = Auth::user();
             return $this->responseSuccess("Success",$user);
+        } catch (\Exception $e){
+            return $this->responseError($e);
+        }
+    }
+
+    public function tokenKey(): \Illuminate\Http\JsonResponse
+    {
+        try {
+            $key = request()->header('Authorization');
+            return $this->responseSuccess("Success",[
+                'current_key'   => $key
+            ]);
         } catch (\Exception $e){
             return $this->responseError($e);
         }

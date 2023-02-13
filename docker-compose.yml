@@ -20,4 +20,4 @@ services:
             - ".env:/var/www/html/.env:rw"
             - "procurex_sso_api_src_volume:/var/www/html"
             - "procurex_sso_api_storage_volume:/var/www/html/storage/public"
-            - "procurex_sso_api_nginx_volume:/nginx/"
+#            - "procurex_sso_api_nginx_volume:/nginx/"
