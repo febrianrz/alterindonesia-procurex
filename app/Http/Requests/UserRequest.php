@@ -31,7 +31,7 @@ class UserRequest extends FormRequest
                 'username'  => 'required|unique:users,username',
                 'email'     => 'required|email|unique:users,email',
                 'company_code'=> 'required|exists:companies,code',
-                'status'    => 'required|in:Active,Inactive',
+                'status'    => 'required|in:ACTIVE,INACTIVE',
                 'password'  => 'required|min:6'
             ];
         } else {
@@ -40,7 +40,7 @@ class UserRequest extends FormRequest
                 'username'  => 'required|unique:users,username,'.$this->route('id'),
                 'email'     => 'required|email|unique:users,email,'.$this->route('id'),
                 'company_code'=> 'required|exists:companies,code',
-                'status'    => 'required|in:Active,Inactive',
+                'status'    => 'required|in:ACTIVE,INACTIVE',
                 'password'  => 'nullable|min:6'
             ];
         }
