@@ -13,6 +13,7 @@ class Auth {
 
     private static ?object $user = null;
     private static $instance = null;
+    private static $currentAuthorization = null;
     public ?int $id = null;
     public ?string $username = null;
     public ?string $email = null;
@@ -43,14 +44,15 @@ class Auth {
     public static function user(): Auth|\Illuminate\Contracts\Auth\Authenticatable|null
     {
         try {
-            if(self::$instance === null && request()->header('Authorization')) {
+            if(self::$instance === null && request()->header('Authorization') && (self::$currentAuthorization  !== request()->header('Authorization'))) {
                 $authorization = str_replace('Bearer ','',request()->header('Authorization'));
                 $jwt = JWT::decode($authorization, new Key(config('procurex.gateway.secret'), 'HS256'));
                 $encryption = new \Illuminate\Encryption\Encrypter( config('procurex.gateway.secret'), 'aes-256-cbc');
                 $now = Carbon::now()->timestamp;
                 if($now >= $jwt->expired_at) throw new \Exception("Expired");
                 $payload = $encryption->decrypt($jwt->value);
-                self::$instance = new self($payload);
+                self::$instance = new self($payload, request()->header('Authorization'));
+                self::$currentAuthorization = request()->header('Authorization');
             }
             return self::$instance;
         } catch (\Exception $e) {
