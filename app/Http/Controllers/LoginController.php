@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LoginRequest;
 use App\Http\Resources\LoginResource;
 use App\Http\Resources\UserResource;
-use App\Libraries\Auth;
 use App\Models\User;
 use App\Services\Login\LoginService;
 use Illuminate\Http\Request;
+use App\Libraries\Auth;
 
 class LoginController extends Controller
 {

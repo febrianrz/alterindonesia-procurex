@@ -8,7 +8,7 @@ use Illuminate\Http\Client\Request;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
-class Auth extends \Illuminate\Support\Facades\Auth {
+class Auth {
 
     private static ?object $user = null;
     private static $instance = null;
@@ -51,7 +51,7 @@ class Auth extends \Illuminate\Support\Facades\Auth {
             }
             return self::$instance;
         } catch (\Exception $e) {
-            return null;
+            throw new \Exception("Invalid Account");
         }
     }
 
