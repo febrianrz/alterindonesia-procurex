@@ -22,7 +22,7 @@ class Auth {
     public ?string $company_name = null;
     public ?object $employee = null;
     public ?array $roles = [];
-    public ?object $companies = null;
+    public ?object $company = null;
 
     public function __construct($user) {
         $this->id = $user->id;
@@ -32,7 +32,7 @@ class Auth {
         $this->company_code = $user->company?->code;
         $this->company_name = $user->company?->name;
         $this->roles = $user->roles;
-        $this->companies = $user->company;
+        $this->company = $user->company;
         $this->employee = $user->employee;
     }
 
