@@ -1,6 +1,7 @@
 <?php
 namespace App\Libraries;
 
+use App\Models\User;
 use Carbon\Carbon;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -109,5 +110,10 @@ class Auth {
 
     public function can($permissionName): bool {
         return true;
+    }
+
+    public function isEmployee(): bool {
+        $user = User::findOrFail($this->id);
+        return (boolean)$user->employee;
     }
 }

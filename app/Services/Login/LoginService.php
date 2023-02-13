@@ -1,11 +1,13 @@
 <?php
 namespace App\Services\Login;
 use App\Http\Resources\LoginResource;
+use App\Libraries\Auth;
 use App\Models\Employee;
 use App\Models\User;
 use App\Services\Login\LoginInterface;
 use Carbon\Carbon;
 use Firebase\JWT\JWT;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
@@ -163,13 +165,43 @@ class LoginService implements LoginInterface {
         if($result->status() !== 200) throw new \Exception("Failed Delete Credential List");
     }
 
-    public function updateProfile(\App\Models\User $user)
+    public function updateProfile(\App\Models\User $user, Request $request)
     {
-        // TODO: Implement updateProfile() method.
+        try {
+            // TODO: Implement updateProfile() method.
+            $user->name = $request->name;
+            $user->save();
+        } catch(\Exception $e){
+            throw new \Exception($e->getMessage());
+        }
     }
 
-    public function updatePassword(\App\Models\User $user)
+    public function updatePassword(\App\Models\User $user, Request $request)
     {
         // TODO: Implement updatePassword() method.
+        try {
+            $user = User::findOrFail(Auth::user()->id);
+            $user->password = bcrypt($request->new_password);
+            $user->save();
+        } catch(\Exception $e){
+            throw new \Exception($e->getMessage());
+        }
+    }
+
+    public function refreshJwt(\App\Models\User $user)
+    {
+        try {
+            $this->logout($user);
+            $expiredAt = Carbon::now()->addSeconds(config('procurex.gateway.duration'))->timestamp;
+            $jwt = $this->generateJWT($user,$expiredAt);
+            return [
+                'token_type'    => 'Bearer',
+                'access_token'  => $jwt,
+                'refresh_token' => '',
+                'expired_at'    => $expiredAt
+            ];
+        } catch(\Exception $e){
+            throw new \Exception($e->getMessage());
+        }
     }
 }
