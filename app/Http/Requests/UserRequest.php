@@ -32,6 +32,7 @@ class UserRequest extends FormRequest
                 'email'     => 'required|email|unique:users,email',
                 'company_code'=> 'required|exists:companies,code',
                 'status'    => 'required|in:ACTIVE,INACTIVE',
+                'roles.*'     => 'nullable|array|exists:roles,id',
                 'password'  => 'required|min:6'
             ];
         } else {
@@ -41,6 +42,7 @@ class UserRequest extends FormRequest
                 'email'     => 'required|email|unique:users,email,'.$this->route('id'),
                 'company_code'=> 'required|exists:companies,code',
                 'status'    => 'required|in:ACTIVE,INACTIVE',
+                'roles.*'     => 'nullable|array|exists:roles,id',
                 'password'  => 'nullable|min:6'
             ];
         }
