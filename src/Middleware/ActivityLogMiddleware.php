@@ -1,13 +1,14 @@
 <?php
 namespace Alterindonesia\Procurex\Middleware;
 
+use Closure;
 use Alterindonesia\Procurex\Facades\Auth;
 use App\Models\UserLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Cookie\Middleware\EncryptCookies as Middleware;
 
-class ActivityLogMiddleware extends Middleware
+
+class ActivityLogMiddleware
 {
     /**
      * Handle an incoming request.

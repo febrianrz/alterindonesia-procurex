@@ -1,13 +1,14 @@
 <?php
 namespace Alterindonesia\Procurex\Middleware;
 
+use Closure;
 use Alterindonesia\Procurex\Facades\GlobalHelper;
 use Alterindonesia\Procurex\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Cookie\Middleware\EncryptCookies as Middleware;
 
-class AuthJWTCheckPermissionMiddleware extends Middleware
+
+class AuthJWTCheckPermissionMiddleware
 {
     /**
      * Handle an incoming request.
