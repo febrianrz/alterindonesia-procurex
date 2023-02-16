@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/api/pings',function(){
-   return "ok";
+Route::prefix('/api',function(){
+    Route::get('/api/pings',function(){
+        return "ok";
+    });
 });
+
