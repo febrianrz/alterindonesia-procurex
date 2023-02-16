@@ -23,6 +23,9 @@ class AlterindonesiaProcurexProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->publishes([
+            __DIR__.'/../config/procurex.php' => config_path('procurex.php'),
+        ]);
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
     }
 }
