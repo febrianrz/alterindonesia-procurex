@@ -11,5 +11,13 @@
             "name": "Febrian Reza"
         }
     ],
-    "require": {}
+    "require": {},
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Alterindonesia\\Procurex\\Providers\\AlterindonesiaProcurexProvider"
+            ],
+            "aliases": {}
+        }
+    }
 }
