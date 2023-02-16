@@ -1,0 +1,15 @@
+{
+    "name": "alterindonesia/procurex",
+    "description": "ProcureX package for microservices",
+    "autoload": {
+        "psr-4": {
+            "Alterindonesia\\Procurex\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Febrian Reza"
+        }
+    ],
+    "require": {}
+}
