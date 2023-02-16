@@ -1,11 +1,11 @@
 <?php
 namespace Alterindonesia\Procurex\Middleware;
 
-use Closure;
 use Alterindonesia\Procurex\Facades\Auth;
-use App\Models\UserLog;
+use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Alterindonesia\Procurex\Models\UserLog;
 
 
 class ActivityLogMiddleware
