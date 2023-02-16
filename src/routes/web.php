@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('/api',function(){
+Route::group(['prefix' => '/api'], function(){
     Route::get('/ping', function () {
         return response()->json([
             'message'   => 'ok'
