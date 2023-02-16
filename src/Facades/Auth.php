@@ -1,5 +1,5 @@
 <?php
-namespace App\Libraries;
+namespace Alterindonesia\Procurex\Facades;
 
 use App\Models\User;
 use Carbon\Carbon;
