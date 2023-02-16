@@ -120,4 +120,6 @@ class Auth extends \Illuminate\Support\Facades\Auth {
         $user = User::findOrFail($this->id);
         return (boolean)$user->employee;
     }
+
+
 }

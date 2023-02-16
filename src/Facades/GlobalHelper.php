@@ -46,4 +46,15 @@ class GlobalHelper
             'data'  => $data
         ], $code);
     }
+
+    public static function generateRolePermissions(): array {
+        $routeCollection = Illuminate\Support\Facades\Route::getRoutes();
+        $routes = [];
+        foreach ($routeCollection as $value) {
+            if (str_starts_with($value->getName(), 'api.')){
+                $routes[] = $value->getName();
+            }
+        }
+        return $routes;
+    }
 }

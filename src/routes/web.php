@@ -15,17 +15,16 @@ Route::group(['prefix' => '/api'], function(){
         ]);
     });
 
-    // List all routes
-    Route::get('/routes',function(){
-        $routeCollection = Illuminate\Support\Facades\Route::getRoutes();
-        $routes = [];
-        foreach ($routeCollection as $value) {
-            if (str_starts_with($value->getName(), 'api.')){
-                $routes[] = $value->getName();
-            }
-        }
-        return \Alterindonesia\Procurex\Facades\GlobalHelper::responseSuccess("Success",$routes);
+    Route::middleware(['log.activity'])->group(function () {
+        Route::middleware(['auth.jwt'])->group(function () {
+            // List all routes
+            Route::get('/routes',function(){
+                $routes = \Alterindonesia\Procurex\Facades\GlobalHelper::generateRolePermissions();
+                return \Alterindonesia\Procurex\Facades\GlobalHelper::responseSuccess("Success",$routes);
+            });
 
+        });
     });
+
 });
 
