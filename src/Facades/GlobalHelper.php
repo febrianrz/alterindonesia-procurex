@@ -61,7 +61,6 @@ class GlobalHelper
                     ->where('role_code',$roleCode)
                     ->where('permission_name',$routeName)
                     ->first();
-                $roleCode =
                 $routes[] = [
                     'route' => $routeName,
                     'role'  => $roleCode,
