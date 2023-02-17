@@ -44,6 +44,25 @@ class AlterindonesiaProcurexController extends \App\Http\Controllers\Controller
            'role_code'  => 'required',
            'permission_name'    => 'required'
         ]);
-        return GlobalHelper::responseSuccess("Success",true);
+        /**
+         * Jika sudah ada, maka di revoke, jika belum ada maka diinsert
+         */
+
+        $exists = DB::table('role_permission_procurex')
+            ->where('role_code',$request->input('role_code'))
+            ->where('permission_name',$request->input('permission_name'))
+            ->first();
+        if($exists) {
+            DB::table('role_permission_procurex')
+                ->where('role_code',$request->input('role_code'))
+                ->where('permission_name',$request->input('permission_name'))
+                ->delete();
+        } else {
+            DB::table('role_permission_procurex')->create([
+                'role_code' => $request->input('role_code'),
+                'permission_name'   => $request->input('permission_name')
+            ]);
+        }
+        return GlobalHelper::responseSuccess("Success",[]);
     }
 }
