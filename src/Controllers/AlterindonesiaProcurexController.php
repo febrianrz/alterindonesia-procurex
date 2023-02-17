@@ -58,7 +58,7 @@ class AlterindonesiaProcurexController extends \App\Http\Controllers\Controller
                 ->where('permission_name',$request->input('permission_name'))
                 ->delete();
         } else {
-            DB::table('role_permission_procurex')->create([
+            DB::table('role_permission_procurex')->insert([
                 'role_code' => $request->input('role_code'),
                 'permission_name'   => $request->input('permission_name')
             ]);
