@@ -3,6 +3,7 @@ namespace Alterindonesia\Procurex\Facades;
 
 use App\Http\Resources\AnonymousCollection;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Route;
 use function response;
 
 class GlobalHelper
@@ -48,7 +49,7 @@ class GlobalHelper
     }
 
     public static function generateRolePermissions(): array {
-        $routeCollection = Illuminate\Support\Facades\Route::getRoutes();
+        $routeCollection = Route::getRoutes();
         $routes = [];
         foreach ($routeCollection as $value) {
             if (str_starts_with($value->getName(), 'api.')){
