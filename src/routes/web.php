@@ -18,10 +18,8 @@ Route::group(['prefix' => '/api'], function(){
     Route::middleware(['log.activity'])->group(function () {
         Route::middleware(['auth.jwt'])->group(function () {
             // List all routes
-            Route::get('/routes',function(){
-                $routes = \Alterindonesia\Procurex\Facades\GlobalHelper::generateRolePermissions();
-                return \Alterindonesia\Procurex\Facades\GlobalHelper::responseSuccess("Success",$routes);
-            });
+            Route::get('/routes','\Alterindonesia\Procurex\Controllers\AlterindonesiaProcurexController@getRouteList');
+            Route::post('/routes/assign','\Alterindonesia\Procurex\Controllers\AlterindonesiaProcurexController@assignRoleRoute');
 
         });
     });

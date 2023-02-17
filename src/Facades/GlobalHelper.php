@@ -49,25 +49,4 @@ class GlobalHelper
         ], $code);
     }
 
-    public static function generateRolePermissions(): array {
-        $request = request();
-        $roleCode = $request->input('role_code') ?? '';
-        $routeCollection = Route::getRoutes();
-        $routes = [];
-        foreach ($routeCollection as $value) {
-            if (str_starts_with($value->getName(), 'api.')){
-                $routeName = $value->getName();
-                $rolePermissionExists = DB::table('role_permission_procurex')
-                    ->where('role_code',$roleCode)
-                    ->where('permission_name',$routeName)
-                    ->first();
-                $routes[] = [
-                    'route' => $routeName,
-                    'role'  => $roleCode,
-                    'status'=> boolval($rolePermissionExists)
-                ];
-            }
-        }
-        return $routes;
-    }
 }
