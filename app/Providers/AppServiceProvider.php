@@ -57,11 +57,17 @@ class AppServiceProvider extends ServiceProvider
         // Menu Binding
         $this->app->when(\App\Http\Controllers\MasterData\ModuleManagement\MenuController::class)
             ->needs(\App\Services\MasterData\MasterDataServiceInterface::class)
-            ->give(\App\Services\MasterData\ModuleManagement\MenuServiceEloquent::class);
+            ->give(\App\Services\MasterData\ModuleManagement\ServiceEloquent::class);
         // SubMenu Binding
         $this->app->when(\App\Http\Controllers\MasterData\ModuleManagement\SubMenuController::class)
             ->needs(\App\Services\MasterData\MasterDataServiceInterface::class)
             ->give(\App\Services\MasterData\ModuleManagement\SubMenuServiceEloquent::class);
         # End Module Management
+
+        # Start Service management
+        $this->app->when(\App\Http\Controllers\MasterData\ServiceManagement\ServiceController::class)
+            ->needs(\App\Services\MasterData\MasterDataServiceInterface::class)
+            ->give(\App\Services\MasterData\ServiceManagement\ServiceEloquent::class);
+        # End Service Management
     }
 }
