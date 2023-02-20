@@ -57,7 +57,8 @@ class ConfigSeeder extends Seeder
         ],[
             'name'  => 'App',
             'is_active' => true,
-            'secret'    => Str::random(60)
+            'secret'    => 'TiT6vruAOngLDu29PBX2opRSYUdF1TbG8GAoRONoeJLwkVSAwAr8MmLzleTL'
+//            'secret'    => Str::random(60)
         ]);
     }
 }
