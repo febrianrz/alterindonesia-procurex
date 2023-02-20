@@ -9,20 +9,7 @@ if(!defined('RESTORE_PATH')){
     define("RESTORE_PATH", "/restore/{id}");
 }
 
-
-
 Route::middleware(['log.activity'])->group(function () {
-    Route::get('/ping', function () {
-        return response()->json([
-            'message'   => 'ok'
-        ]) ;
-    });
-    Route::get('/time', function(){
-        return response()->json([
-            'timestamp'  => time(),
-            'datetime'   => \Carbon\Carbon::now()->format("d F Y, H:i:s")
-        ]);
-    });
     Route::post('/login', 'App\Http\Controllers\LoginController@doLogin')->name('api.login');
 
     Route::middleware(['auth.jwt'])->group(function () {

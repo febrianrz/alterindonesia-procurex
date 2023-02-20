@@ -12,5 +12,7 @@ return [
         'username'  => env('SSO_PI_USERNAME','DEV20'),
         'password'  => env('SSO_PI_PASSWORD','DEVjs3edAfE2f3FDeG3r34eVjE4A69BH'),
         'default_role_name' => env('SSO_PI_DEFAULT_ROLE_NAME','staff')
-    ]
+    ],
+    // jadikan true jika service ini adalah sso
+    "is_sso_service"        => true,
 ];

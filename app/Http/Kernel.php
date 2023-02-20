@@ -2,7 +2,8 @@
 
 namespace App\Http;
 
-use App\Http\Middleware\ActivityLogMiddleware;
+use Alterindonesia\Procurex\Middleware\AuthJWTCheckPermissionMiddleware;
+use Alterindonesia\Procurex\Middleware\AuthJWTMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -55,8 +56,8 @@ class Kernel extends HttpKernel
      */
     protected $routeMiddleware = [
         'auth' => \App\Http\Middleware\Authenticate::class,
-        'auth.jwt' => \App\Http\Middleware\AuthJWTMiddleware::class,
-        'auth.jwt.permission' => \App\Http\Middleware\AuthJWTCheckPermissionMiddleware::class,
+        'auth.jwt' => AuthJWTMiddleware::class,
+        'auth.jwt.permission' => AuthJWTCheckPermissionMiddleware::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
@@ -66,6 +67,6 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'log.activity'  => ActivityLogMiddleware::class
+        'log.activity'  => \Alterindonesia\Procurex\Middleware\ActivityLogMiddleware::class
     ];
 }

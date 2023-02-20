@@ -6,6 +6,7 @@ namespace App\Services\MasterData\UserManagement;
 use App\Http\Resources\PermissionResource;
 use App\Http\Resources\UserResource;
 use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 use App\Services\MasterData\MasterDataServiceEloquent;
 use Illuminate\Database\Eloquent\Model;
@@ -34,6 +35,42 @@ class UserServiceEloquent extends MasterDataServiceEloquent
         $data = $request->only(['name','email','status','company_code','username']);
         $data['password'] = bcrypt($request->password);
         return $data;
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    public function create(Request $request): array
+    {
+        $result = parent::create($request);
+        foreach ($request->input('roles') as $role_id){
+            $role = Role::find($role_id);
+            if($role) $result['data']->assignRole($role->name);
+        }
+       return $result;
+    }
+
+    /**
+     * @param string $id
+     * @param Request $request
+     * @return array
+     */
+    public function update(string $id, Request $request): array
+    {
+        $result = parent::update($id,$request);
+
+        // Revoke All Roles
+        $role_names = $result['data']->roles()->pluck('name');
+        foreach($role_names as $role_name) {
+            $result['data']->removeRole($role_name);
+        }
+
+        foreach ($request->input('roles') as $role_id){
+            $role = Role::find($role_id);
+            if($role) $result['data']->assignRole($role->name);
+        }
+        return $result;
     }
 
     /**
