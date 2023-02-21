@@ -55,10 +55,11 @@ build_test:
     # - docker exec -it $(docker ps -a -q --filter ancestor=procurex-sso --format="{{.ID}}") php artisan config:cache
 #    - docker exec -it $(docker ps -a -q --filter ancestor=procurex-sso --format="{{.ID}}") php artisan test
 
-migrate-fresh-seed:
+migrate-seed:
   stage: .post
   when: manual
   only:
     - main
   script:
-    - docker exec $(docker ps -a -q --filter ancestor=procurex-sso --format="{{.ID}}") php artisan migrate:fresh --seed --force
+    - docker exec $(docker ps -a -q --filter ancestor=procurex-sso --format="{{.ID}}") php artisan migrate --force
+    - docker exec $(docker ps -a -q --filter ancestor=procurex-sso --format="{{.ID}}") php artisan db:seed
