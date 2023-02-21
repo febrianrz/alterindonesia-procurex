@@ -5,7 +5,6 @@ namespace App\Services\MasterData\ServiceManagement;
 
 use App\Http\Resources\ServiceResource;
 use App\Libraries\Auth;
-use App\Models\Menu;
 use App\Models\Service;
 use App\Services\MasterData\MasterDataServiceEloquent;
 use Illuminate\Database\Eloquent\Model;
