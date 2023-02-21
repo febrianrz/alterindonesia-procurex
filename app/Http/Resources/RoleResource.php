@@ -17,6 +17,7 @@ class RoleResource extends JsonResource
     {
         return [
             "id"            => (int) $this->id,
+            "code"          => (string) $this->code,
             "name"          => (string) $this->name,
             "guard_name"    => (string) $this->guard_name,
             "action"        => $this->whenHas(

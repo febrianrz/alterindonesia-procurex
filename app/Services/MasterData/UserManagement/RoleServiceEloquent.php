@@ -31,7 +31,8 @@ class RoleServiceEloquent extends MasterDataServiceEloquent
         // return new data
         return [
             "name"          => $request->name,
-            "guard_name"    => $request->guard_name
+            "guard_name"    => $request->guard_name,
+            "code"          => $request->code,
         ];
     }
 
@@ -45,6 +46,7 @@ class RoleServiceEloquent extends MasterDataServiceEloquent
         // set data
         $model->name = $request->name;
         $model->guard_name = $request->guard_name;
+        $model->code = $request->code;
 
         return $model;
     }
