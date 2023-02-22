@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Libraries\Auth;
+use App\Models\Menu;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class MenuResource extends JsonResource
@@ -15,6 +16,7 @@ class MenuResource extends JsonResource
      */
     public function toArray($request)
     {
+
         return [
             "id"        => (int) $this->id,
             "module"    => [
@@ -28,6 +30,7 @@ class MenuResource extends JsonResource
             "order_no"  => (int) $this->order_no,
             "status"    => (string) $this->status,
             "submenus"  => SubMenuResource::collection($this->whenLoaded('submenus')),
+            "routes"    => MenuServiceRouteResource::collection($this->services),
             "action"    => $this->whenHas(
                 'id',
                 function () use ($request) {
