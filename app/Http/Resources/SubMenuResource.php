@@ -27,6 +27,7 @@ class SubMenuResource extends JsonResource
             "status"    => (string) $this->status,
             "path"      => (string) $this->path,
             "order_no"  => (int) $this->order_no,
+            "routes"    => MenuServiceRouteResource::collection($this->services),
             "action"    => $this->whenHas(
                 'id',
                 function () use ($request) {

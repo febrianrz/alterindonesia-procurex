@@ -23,4 +23,10 @@ class SubMenu extends Model
     {
         return $this->belongsTo(Menu::class);
     }
+
+    public function services(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Service::class,'submenu_service_routes','submenu_id','service_id')
+            ->withPivot('route');
+    }
 }

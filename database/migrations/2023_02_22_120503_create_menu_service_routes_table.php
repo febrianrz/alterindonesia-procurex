@@ -18,6 +18,11 @@ return new class extends Migration
             $table->unsignedBigInteger('service_id');
             $table->string('route');
         });
+        Schema::create('submenu_service_routes', function (Blueprint $table) {
+            $table->unsignedBigInteger('submenu_id');
+            $table->unsignedBigInteger('service_id');
+            $table->string('route');
+        });
     }
 
     /**
@@ -28,5 +33,6 @@ return new class extends Migration
     public function down()
     {
         Schema::dropIfExists('menu_service_routes');
+        Schema::dropIfExists('submenu_service_routes');
     }
 };
