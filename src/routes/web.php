@@ -19,7 +19,9 @@ Route::group(['prefix' => '/api'], function(){
         Route::middleware(['auth.jwt'])->group(function () {
             // List all routes
             Route::get('/routes','\Alterindonesia\Procurex\Controllers\AlterindonesiaProcurexController@getRouteList');
-            Route::post('/routes/assign','\Alterindonesia\Procurex\Controllers\AlterindonesiaProcurexController@assignRoleRoute')->name('api.route.assign');
+            if(config('procurex.is_sso_service')) {
+                Route::post('/routes/assign', '\Alterindonesia\Procurex\Controllers\AlterindonesiaProcurexController@assignRoleRoute')->name('api.route.assign');
+            }
 
         });
     });

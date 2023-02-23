@@ -4,6 +4,7 @@ namespace Alterindonesia\Procurex\Controllers;
 use Alterindonesia\Procurex\Facades\GlobalHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 
 class AlterindonesiaProcurexController extends \App\Http\Controllers\Controller
@@ -42,27 +43,47 @@ class AlterindonesiaProcurexController extends \App\Http\Controllers\Controller
     public function assignRoleRoute(Request $request) {
         $request->validate([
            'role_code'  => 'required',
-           'permission_name'    => 'required'
+           'permission_name'    => 'required',
+            'state'     => 'required|boolean',
+            'url'       => 'nullable'
         ]);
-        /**
-         * Jika sudah ada, maka di revoke, jika belum ada maka diinsert
-         */
 
-        $exists = DB::table('role_permission_procurex')
-            ->where('role_code',$request->input('role_code'))
-            ->where('permission_name',$request->input('permission_name'))
-            ->first();
-        if($exists) {
-            DB::table('role_permission_procurex')
-                ->where('role_code',$request->input('role_code'))
-                ->where('permission_name',$request->input('permission_name'))
-                ->delete();
-        } else {
-            DB::table('role_permission_procurex')->insert([
-                'role_code' => $request->input('role_code'),
-                'permission_name'   => $request->input('permission_name')
-            ]);
+        try {
+            DB::beginTransaction();
+            if ($request->input('state') === true) {
+                $exists = DB::table('role_permission_procurex')
+                    ->where('role_code', $request->input('role_code'))
+                    ->where('permission_name', $request->input('permission_name'))
+                    ->first();
+                if (!$exists) {
+                    DB::table('role_permission_procurex')->insert([
+                        'role_code' => $request->input('role_code'),
+                        'permission_name' => $request->input('permission_name')
+                    ]);
+                }
+            } else {
+                DB::table('role_permission_procurex')
+                    ->where('role_code', $request->input('role_code'))
+                    ->where('permission_name', $request->input('permission_name'))
+                    ->delete();
+            }
+
+            if (config('procurex.is_sso_service') && $request->has('url') && $request->input('url')) {
+                $http = Http::withHeaders([
+                    'Authorization' => $request->header('Authorization')
+                ])->post($request->input('url'), [
+                    'role_code' => $request->input('role_code'),
+                    'permission_name' => $request->input('permission_name'),
+                    'state' => $request->input('state')
+                ]);
+                if ($http->status() !== 200) throw new \Exception("Gagal meneruskan ke service {$request->url}");
+            }
+
+            DB::commit();
+            return GlobalHelper::responseSuccess("Success", []);
+        } catch (\Exception $e){
+            DB::rollBack();
+            return GlobalHelper::responseError($e->getMessage());
         }
-        return GlobalHelper::responseSuccess("Success",[]);
     }
 }
