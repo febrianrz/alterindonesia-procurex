@@ -1,6 +1,7 @@
 {
     "name": "alterindonesia/procurex",
     "description": "ProcureX package for microservices",
+    "license": "proprietary",
     "autoload": {
         "psr-4": {
             "Alterindonesia\\Procurex\\": "src/"
