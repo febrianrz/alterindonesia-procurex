@@ -19,7 +19,8 @@ class MenuServiceRouteResource extends JsonResource
         return [
             'service_id'    => $this->pivot->service_id,
             'route'         => $this->pivot->route,
-            'service_name'  => $service->name
+            'service_name'  => $service->name,
+            'url'           => $service->url
         ];
     }
 }
