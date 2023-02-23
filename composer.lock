@@ -77,16 +77,16 @@
         },
         {
             "name": "alterindonesia/procurex",
-            "version": "v0.0.19",
+            "version": "v0.0.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/febrianrz/alterindonesia-procurex.git",
-                "reference": "93366d5384a0722673eac151cd393422ea02f0b1"
+                "reference": "5112cc08ba7694b604db2262401f85c47f19e0f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/febrianrz/alterindonesia-procurex/zipball/93366d5384a0722673eac151cd393422ea02f0b1",
-                "reference": "93366d5384a0722673eac151cd393422ea02f0b1",
+                "url": "https://api.github.com/repos/febrianrz/alterindonesia-procurex/zipball/5112cc08ba7694b604db2262401f85c47f19e0f1",
+                "reference": "5112cc08ba7694b604db2262401f85c47f19e0f1",
                 "shasum": ""
             },
             "type": "library",
@@ -112,9 +112,9 @@
             "description": "ProcureX package for microservices",
             "support": {
                 "issues": "https://github.com/febrianrz/alterindonesia-procurex/issues",
-                "source": "https://github.com/febrianrz/alterindonesia-procurex/tree/v0.0.19"
+                "source": "https://github.com/febrianrz/alterindonesia-procurex/tree/v0.0.20"
             },
-            "time": "2023-02-23T06:10:09+00:00"
+            "time": "2023-02-23T07:04:49+00:00"
         },
         {
             "name": "bezhansalleh/filament-shield",
