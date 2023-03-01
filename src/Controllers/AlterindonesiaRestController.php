@@ -111,10 +111,10 @@ class AlterindonesiaRestController extends AlterindonesiaBaseController
      * @param  string  $id
      * @return JsonResponse
      */
-    public function destroy(string $id): JsonResponse
+    public function destroy(string $id, Request $request): JsonResponse
     {
         // delete data module
-        $result = $this->service->delete($id);
+        $result = $this->service->delete($id, $request);
 
         // check result
         if (!$result["status"]) {
@@ -129,7 +129,7 @@ class AlterindonesiaRestController extends AlterindonesiaBaseController
      * @param string $id
      * @return JsonResponse
      */
-    public function restore(string $id): JsonResponse
+    public function restore(string $id, Request $request): JsonResponse
     {
         // delete data module
         $result = $this->service->restore($id);
