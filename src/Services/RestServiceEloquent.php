@@ -113,7 +113,11 @@ class RestServiceEloquent implements RestServiceInterface
         $newData = $this->generateNewData($request);
 
         // create data
-        $data = $this->model->create($newData);
+        $this->model = $this->model->fill($newData);
+        $this->beforeStore($this->model,$request);
+        $this->model->save();
+        $data = $this->model;
+        $this->afterStore($data,$request);
 
         // set success result
         $this->result["message"] = __("{$this->messageKey}.created");
@@ -164,9 +168,11 @@ class RestServiceEloquent implements RestServiceInterface
         if (!is_null($data)) {
             // set data
             $this->setUpdatedData($data, $request);
+            $this->beforeUpdate($data,$request);
 
             // update data
             $data->save();
+            $this->afterUpdate($data,$request);
 
             // set success result
             $this->result["message"] = __("{$this->messageKey}.updated");
@@ -186,15 +192,17 @@ class RestServiceEloquent implements RestServiceInterface
      * @param string $id
      * @return array
      */
-    public function delete(string $id): array
+    public function delete(string $id, Request $request): array
     {
         // find data by id
         $data = $this->find($id);
 
         // check data existence
         if (!is_null($data)) {
+            $this->beforeDelete($data, $request);
             // delete data
             $data->delete();
+            $this->afterDelete($data, $request);
 
             // set success result
             $this->result["message"] = __("{$this->messageKey}.deleted");
@@ -263,4 +271,13 @@ class RestServiceEloquent implements RestServiceInterface
     {
         return $this->model;
     }
+
+    public function beforeStore(Model $model, Request $request){}
+    public function afterStore(Model $model, Request $request){}
+
+    public function beforeUpdate(Model $model, Request $request){}
+    public function afterUpdate(Model $model, Request $request){}
+
+    public function beforeDelete(Model $model, Request $request){}
+    public function afterDelete(Model $model, Request $request){}
 }
