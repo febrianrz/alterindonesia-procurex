@@ -135,8 +135,8 @@ class RestServiceEloquent implements RestServiceInterface
     {
         // find data by id
         $data = $this->model->with($relationship)
-            ->where("id", "=", $id)
-            ->get();
+            ->where($this->model->getKeyName(), "=", $id)
+            ->firstOrFail();
 
         // check data existence
         if (!$data->isEmpty()) {
