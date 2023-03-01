@@ -1,7 +1,7 @@
 <?php
 namespace Alterindonesia\Procurex\Facades;
 
-use App\Http\Resources\AnonymousCollection;
+use Alterindonesia\Procurex\Resources\AnonymousCollection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -9,7 +9,7 @@ use function response;
 
 class GlobalHelper
 {
-    public static function responseSuccess($message, $data=null, $code=200, $resource=null)
+    public static function responseSuccess($message, $data=null, $code=200, $resource=null): AnonymousCollection|JsonResponse
     {
         if ($resource) {
             return new AnonymousCollection(
