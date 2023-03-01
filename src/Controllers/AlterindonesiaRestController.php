@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Alterindonesia\Procurex\Controllers;
 
 use Alterindonesia\Procurex\Facades\Auth;
 use Alterindonesia\Procurex\Facades\GlobalHelper;
