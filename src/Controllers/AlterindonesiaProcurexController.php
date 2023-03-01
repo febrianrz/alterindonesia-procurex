@@ -68,6 +68,7 @@ class AlterindonesiaProcurexController extends \App\Http\Controllers\Controller
                     ->delete();
             }
 
+            // Jika service ini adalah SSO, maka redirect assign ke service yang bersangkutan
             if (config('procurex.is_sso_service') && $request->has('url') && $request->input('url')) {
                 $http = Http::withHeaders([
                     'Authorization' => $request->header('Authorization')
