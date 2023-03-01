@@ -31,5 +31,7 @@ class AlterindonesiaProcurexProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
         $this->app['router']->aliasMiddleware('auth.jwt', AuthJWTMiddleware::class);
+        $this->app['router']->aliasMiddleware('log.activity', AuthJWTMiddleware::class);
+
     }
 }

@@ -15,10 +15,8 @@ Route::group(['prefix' => '/api'], function(){
         ]);
     });
 
-        Route::middleware([
-            \Alterindonesia\Procurex\Middleware\AuthJWTMiddleware::class,
-            \Alterindonesia\Procurex\Middleware\ActivityLogMiddleware::class
-        ])->group(function () {
+    Route::middleware(['log.activity'])->group(function () {
+        Route::middleware(['auth.jwt'])->group(function () {
             // List all routes
             Route::get('/routes','\Alterindonesia\Procurex\Controllers\AlterindonesiaProcurexController@getRouteList');
             if(config('procurex.is_sso_service')) {
@@ -26,6 +24,7 @@ Route::group(['prefix' => '/api'], function(){
             }
 
         });
+    });
 
 });
 
