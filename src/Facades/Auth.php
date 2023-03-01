@@ -56,7 +56,8 @@ class Auth extends \Illuminate\Support\Facades\Auth {
             }
             return self::$instance;
         } catch (\Exception $e) {
-            throw new \Exception("Invalid Account");
+//            throw new \Exception("Invalid Account");
+            return abort(403,"Unauthenticated");
         }
     }
 
