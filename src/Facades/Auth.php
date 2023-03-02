@@ -115,6 +115,7 @@ class Auth extends \Illuminate\Support\Facades\Auth {
     }
 
     public function can($permissionName): bool {
+
         $roleNames = $this->pluckRoleName();
         $check = DB::table('role_permission_procurex')
             ->whereIn('role_code',$roleNames)

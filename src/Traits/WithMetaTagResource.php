@@ -29,8 +29,7 @@ trait WithMetaTagResource
 
     public function canCreate(): bool
     {
-        $routeName = request()->route()->getName();
-        $routeName = str_replace(['.index','.update','.destroy'],['.store'],$routeName);
-        return \Alterindonesia\Procurex\Facades\Auth::user()->can($routeName);
+
+        return \Alterindonesia\Procurex\Facades\Auth::user()->can('store');
     }
 }
