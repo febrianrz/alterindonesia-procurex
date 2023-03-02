@@ -2,13 +2,11 @@
 
 namespace App\Http\Resources;
 
-use App\Http\Resources\Traits\WithMeta;
 use App\Libraries\Auth;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ServiceResource extends JsonResource
 {
-    use WithMeta;
     /**
      * Transform the resource into an array.
      *

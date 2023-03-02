@@ -2,12 +2,8 @@
 namespace App\Services\User;
 
 use App\Contracts\RestApiContract;
-use App\Http\Resources\UserResource;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Yajra\DataTables\Facades\DataTables;
 
 class UserService implements RestApiContract {
 

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d60665765f93e39bab46a48a277d062e",
+    "content-hash": "f7716348944da9061a22559bf9620d64",
     "packages": [
         {
             "name": "akaunting/laravel-money",
@@ -77,16 +77,16 @@
         },
         {
             "name": "alterindonesia/procurex",
-            "version": "v0.0.20",
+            "version": "v0.0.38",
             "source": {
                 "type": "git",
                 "url": "https://github.com/febrianrz/alterindonesia-procurex.git",
-                "reference": "5112cc08ba7694b604db2262401f85c47f19e0f1"
+                "reference": "306b08871debb947e919aa065c3dbe716ff9e358"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/febrianrz/alterindonesia-procurex/zipball/5112cc08ba7694b604db2262401f85c47f19e0f1",
-                "reference": "5112cc08ba7694b604db2262401f85c47f19e0f1",
+                "url": "https://api.github.com/repos/febrianrz/alterindonesia-procurex/zipball/306b08871debb947e919aa065c3dbe716ff9e358",
+                "reference": "306b08871debb947e919aa065c3dbe716ff9e358",
                 "shasum": ""
             },
             "type": "library",
@@ -104,6 +104,9 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "proprietary"
+            ],
             "authors": [
                 {
                     "name": "Febrian Reza"
@@ -112,9 +115,9 @@
             "description": "ProcureX package for microservices",
             "support": {
                 "issues": "https://github.com/febrianrz/alterindonesia-procurex/issues",
-                "source": "https://github.com/febrianrz/alterindonesia-procurex/tree/v0.0.20"
+                "source": "https://github.com/febrianrz/alterindonesia-procurex/tree/v0.0.38"
             },
-            "time": "2023-02-23T07:04:49+00:00"
+            "time": "2023-03-02T05:32:44+00:00"
         },
         {
             "name": "bezhansalleh/filament-shield",

@@ -2,14 +2,12 @@
 
 namespace App\Http\Resources;
 
-use App\Http\Resources\Traits\WithMeta;
 use App\Libraries\Auth;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class UserResource extends JsonResource
 {
-    use WithMeta;
     /**
      * @param $request
      * @return array|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable
