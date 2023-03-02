@@ -2,11 +2,13 @@
 
 namespace App\Http\Resources;
 
+use Alterindonesia\Procurex\Traits\HasActionTrait;
 use App\Libraries\Auth;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class SubMenuResource extends JsonResource
 {
+    use HasActionTrait;
     /**
      * Transform the resource into an array.
      *
@@ -28,28 +30,7 @@ class SubMenuResource extends JsonResource
             "path"      => (string) $this->path,
             "order_no"  => (int) $this->order_no,
             "routes"    => MenuServiceRouteResource::collection($this->services),
-            "action"    => $this->whenHas(
-                'id',
-                function () use ($request) {
-                    // set action
-                    $action = [
-                        "edit"  => Auth::user()->can("update") ? route('api.sub_menu.update', $this->id) : null,
-                        "delete"=> Auth::user()->can("destroy") ? route('api.sub_menu.destroy', $this->id) : null,
-                        "restore"  => Auth::user()->can("destroy") ? route('api.sub_menu.restore', $this->id) : null
-                    ];
-
-                    // check if trashed resource
-                    if ($request->has("filter")
-                        && array_key_exists("trashed", $request->filter)
-                    ) {
-                        unset($action["delete"]);
-                    } else {
-                        unset($action["restore"]);
-                    }
-
-                    return $action;
-                }
-            )
+            "action"    => $this->action($request)
         ];
     }
 }

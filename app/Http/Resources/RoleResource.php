@@ -2,11 +2,13 @@
 
 namespace App\Http\Resources;
 
+use Alterindonesia\Procurex\Traits\HasActionTrait;
 use App\Libraries\Auth;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class RoleResource extends JsonResource
 {
+    use HasActionTrait;
     /**
      * Transform the resource into an array.
      *
@@ -20,28 +22,7 @@ class RoleResource extends JsonResource
             "code"          => (string) $this->code,
             "name"          => (string) $this->name,
             "guard_name"    => (string) $this->guard_name,
-            "action"        => $this->whenHas(
-                'id',
-                function () use ($request) {
-                    // set action
-                    $action = [
-                        "edit"  => Auth::user()->can("update") ? route('api.role.update', $this->id) : null,
-                        "delete"=> Auth::user()->can("destroy") ? route('api.role.destroy', $this->id) : null,
-                        "restore"  => Auth::user()->can("destroy") ? route('api.role.restore', $this->id) : null
-                    ];
-
-                    // check if trashed resource
-                    if ($request->has("filter")
-                        && array_key_exists("trashed", $request->filter)
-                    ) {
-                        unset($action["delete"]);
-                    } else {
-                        unset($action["restore"]);
-                    }
-
-                    return $action;
-                }
-            )
+            "action"        => $this->action($request)
         ];
     }
 }
