@@ -2,12 +2,13 @@
 
 namespace App\Http\Resources;
 
+use Alterindonesia\Procurex\Traits\HasCanStoreTrait;
 use App\Libraries\Auth;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ModuleResource extends JsonResource
 {
-
+    use HasCanStoreTrait;
     /**
      * Transform the resource into an array.
      *
@@ -42,11 +43,6 @@ class ModuleResource extends JsonResource
                 }
             )
         ];
-    }
-
-    public static function canCreate():bool
-    {
-        return true;
     }
 
 }
