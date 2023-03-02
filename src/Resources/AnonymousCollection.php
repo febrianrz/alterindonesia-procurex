@@ -12,10 +12,11 @@ class AnonymousCollection extends ResourceCollection
 
     public string $wrapper;
 
-    public function __construct($resource, $wrapper)
+    public function __construct($resource, $wrapper, $canStore=false)
     {
         parent::__construct($resource);
         $this->wrapper = $wrapper;
+        $this->canStore = $canStore;
     }
 
     /**

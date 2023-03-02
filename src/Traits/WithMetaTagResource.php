@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 trait WithMetaTagResource
 {
     protected int $code = 200;
+    protected bool $canStore = false;
 
     public function with($request): array
     {
@@ -15,21 +16,9 @@ trait WithMetaTagResource
             'meta' => [
                 'message' => 'Success',
                 'code' => $this->code,
-                'create'    => $this->canCreate()
+                'create'    => $this->canStore
             ],
         ];
     }
 
-    public function withCode(int $code): static
-    {
-        $this->code = $code;
-
-        return $this;
-    }
-
-    public function canCreate(): bool
-    {
-
-        return \Alterindonesia\Procurex\Facades\Auth::user()->can('store');
-    }
 }
