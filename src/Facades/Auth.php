@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -114,7 +115,12 @@ class Auth extends \Illuminate\Support\Facades\Auth {
     }
 
     public function can($permissionName): bool {
-        return true;
+        $roleNames = $this->pluckRoleName();
+        $check = DB::table('role_permission_procurex')
+            ->whereIn('role_code',$roleNames)
+            ->where('permission_name',$permissionName)
+            ->first();
+        return boolval($check);
     }
 
     public function isEmployee(): bool {
