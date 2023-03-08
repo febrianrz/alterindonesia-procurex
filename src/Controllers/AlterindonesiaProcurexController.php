@@ -6,8 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Routing\Controller as BaseController;
 
-class AlterindonesiaProcurexController extends \App\Http\Controllers\Controller
+class AlterindonesiaProcurexController extends BaseController
 {
     /**
      * @param Request $request
