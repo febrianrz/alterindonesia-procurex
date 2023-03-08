@@ -8,32 +8,14 @@ use Illuminate\Encryption\Encrypter;
 trait WithJwtToken
 {
     /**
-     * @param  int  $id
-     * @param  string  $name
-     * @param  string  $username
-     * @param  string  $email
-     * @param  array<int, array{ id: int, name: string}>  $roles
-     * @param  array{ code: string, name: string }  $company
-     * @return $this
+     * @see self::getDefaultJwtUserData()
      */
-    public function withJwtToken(
-        int $id = 1,
-        string $name = 'Superadmin',
-        string $username = 'superadmin',
-        string $email = 'superadmin@app.com',
-        array $roles = [['id' => 1, 'name' => 'superadmin']],
-        array $company = ['code' => 'A000', 'name' => 'PT Pupuk Indonesia'],
-    ): static
+    public function withFakeJwtToken(array $data = []): static
     {
-        $this->jwtUser = (object) [
-            'id' => $id,
-            'name' => $name,
-            'username' => $username,
-            'email' => $email,
-            'roles' => array_map(static fn (array $role) => (object) $role, $roles),
-            'company' => (object) $company,
-            'employee' => null,
-        ];
+        $this->jwtUser = (object) array_merge(
+            $this->getDefaultJwtUserData(),
+            $data,
+        );
 
         $encryption = new Encrypter( config('procurex.gateway.secret'), 'aes-256-cbc');
         $payload = [
@@ -44,5 +26,27 @@ trait WithJwtToken
         $token = JWT::encode($payload, config('procurex.gateway.secret'), 'HS256');
 
         return $this->withToken($token);
+    }
+    private function getDefaultJwtUserData(): array
+    {
+        return [
+            'id' => 1,
+            'username' => 'superadmin',
+            'email' => 'superadmin@app.com',
+            'name' => 'Superadmin',
+            'employee' => null,
+            'company_code' => 'A000',
+            'company_name' => 'PT Pupuk Indonesia',
+            'roles' => [
+                [
+                    'id' => 1,
+                    'name' => 'superadmin',
+                ],
+            ],
+            'company' => (object) [
+                'code' => 'A000',
+                'name' => 'PT Pupuk Indonesia',
+            ],
+        ];
     }
 }
