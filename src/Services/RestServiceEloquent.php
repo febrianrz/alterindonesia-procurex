@@ -85,13 +85,13 @@ class RestServiceEloquent implements RestServiceInterface
     {
         $this->result["data"] = QueryBuilder::for($this->model)
             ->allowedFields('id', ...$this->model->getFillable())
-            ->allowedFilters(
+            ->allowedFilters($this->overrideAllowedFilters() ?? [
                 AllowedFilter::custom('created_at', new FilterDate()),
                 AllowedFilter::custom('updated_at', new FilterDate()),
                 AllowedFilter::trashed(),
                 ...$this->model->getFillable(),
                 ...$this->defaultAllowedFilter,
-            )
+            ])
             ->defaultSort($this->model->getKeyName())
             ->allowedSorts(
                 ...$this->defaultAllowedSorts,
@@ -136,10 +136,10 @@ class RestServiceEloquent implements RestServiceInterface
         // find data by id
         $data = $this->model->with($relationship)
             ->where($this->model->getKeyName(), "=", $id)
-            ->get();
+            ->first();
 
         // check data existence
-        if (!$data->isEmpty()) {
+        if ($data) {
             // set success result
             $this->result["data"] = $data;
             $this->result["resource"] = $this->resource;
@@ -280,4 +280,9 @@ class RestServiceEloquent implements RestServiceInterface
 
     public function beforeDelete(Model $model, Request $request){}
     public function afterDelete(Model $model, Request $request){}
+
+    protected function overrideAllowedFilters(): ?array
+    {
+        return null;
+    }
 }
