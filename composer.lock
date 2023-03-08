@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "35cb4bb667e55d2396e7e46788ff035a",
+    "content-hash": "d60665765f93e39bab46a48a277d062e",
     "packages": [
         {
             "name": "akaunting/laravel-money",
@@ -77,16 +77,16 @@
         },
         {
             "name": "alterindonesia/procurex",
-            "version": "v0.0.44",
+            "version": "v0.0.45",
             "source": {
                 "type": "git",
                 "url": "https://github.com/febrianrz/alterindonesia-procurex.git",
-                "reference": "d902da089a3b003b4de8f94c19f0e69f8c08d321"
+                "reference": "26ea65264dbf63dd858b45b7465cf76abf62bcf8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/febrianrz/alterindonesia-procurex/zipball/d902da089a3b003b4de8f94c19f0e69f8c08d321",
-                "reference": "d902da089a3b003b4de8f94c19f0e69f8c08d321",
+                "url": "https://api.github.com/repos/febrianrz/alterindonesia-procurex/zipball/26ea65264dbf63dd858b45b7465cf76abf62bcf8",
+                "reference": "26ea65264dbf63dd858b45b7465cf76abf62bcf8",
                 "shasum": ""
             },
             "type": "library",
@@ -115,9 +115,9 @@
             "description": "ProcureX package for microservices",
             "support": {
                 "issues": "https://github.com/febrianrz/alterindonesia-procurex/issues",
-                "source": "https://github.com/febrianrz/alterindonesia-procurex/tree/v0.0.44"
+                "source": "https://github.com/febrianrz/alterindonesia-procurex/tree/v0.0.45"
             },
-            "time": "2023-03-02T06:21:03+00:00"
+            "time": "2023-03-08T04:21:47+00:00"
         },
         {
             "name": "bezhansalleh/filament-shield",
