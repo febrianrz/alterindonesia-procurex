@@ -27,6 +27,7 @@ trait WithJwtToken
 
         return $this->withToken($token);
     }
+
     private function getDefaultJwtUserData(): array
     {
         return [
@@ -38,7 +39,7 @@ trait WithJwtToken
             'company_code' => 'A000',
             'company_name' => 'PT Pupuk Indonesia',
             'roles' => [
-                [
+                (object) [
                     'id' => 1,
                     'name' => 'superadmin',
                 ],
