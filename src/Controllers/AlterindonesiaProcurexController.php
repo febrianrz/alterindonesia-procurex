@@ -73,7 +73,7 @@ class AlterindonesiaProcurexController extends BaseController
             if (config('procurex.is_sso_service') && $request->has('url') && $request->input('url')) {
                 $http = Http::withHeaders([
                     'Authorization' => $request->header('Authorization')
-                ])->post($request->input('url'), [
+                ])->post($request->input('url')."/routes/assign", [
                     'role_code' => $request->input('role_code'),
                     'permission_name' => $request->input('permission_name'),
                     'state' => $request->input('state')
