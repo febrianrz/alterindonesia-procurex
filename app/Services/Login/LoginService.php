@@ -16,7 +16,11 @@ class LoginService implements LoginInterface {
 
     public function login($username, $password) : array
     {
-        $this->loginToSSOPI($username,$password);
+        $configSSO = \App\Models\Config::where('code','SSOPI')->first();
+        if($configSSO && $configSSO->data['enable'] === true){
+            $this->loginToSSOPI($username,$password);
+        }
+
         $user = User::where('username',$username)->where('status','Active')->first();
         if(!$user) throw new \Exception(__("User Not Found"));
         if(!Hash::check($password,$user->password)) throw new \Exception(__("Username or Password is Invalid"));
