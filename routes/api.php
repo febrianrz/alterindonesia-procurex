@@ -2,14 +2,20 @@
 
 use Illuminate\Support\Facades\Route;
 
-if(!defined('ID')){
+if (!defined('ID')) {
     define("ID", "/{id}");
 }
-if(!defined('RESTORE_PATH')){
+if (!defined('RESTORE_PATH')) {
     define("RESTORE_PATH", "/restore/{id}");
 }
 
 Route::middleware(['log.activity'])->group(function () {
+    Route::get('/ping', function () {
+        return response()->json([
+            'message'   => 'ok'
+        ]) ;
+    });
+
     Route::post('/login', 'App\Http\Controllers\LoginController@doLogin')->name('api.login');
 
     Route::middleware(['auth.jwt'])->group(function () {
@@ -22,7 +28,7 @@ Route::middleware(['log.activity'])->group(function () {
 
         # User Management
         require __DIR__."/UserManagement/role-api.php";
-//        require __DIR__."/UserManagement/permission-api.php";
+        require __DIR__."/UserManagement/permission-api.php";
         require __DIR__."/UserManagement/user-api.php";
 
         # Module Management
@@ -32,6 +38,9 @@ Route::middleware(['log.activity'])->group(function () {
 
         # Service Management
         require __DIR__."/ServiceManagement/service-api.php";
+
+        # Employee Management
+        require __DIR__."/EmployeeManagement/employee-api.php";
     });
 });
 

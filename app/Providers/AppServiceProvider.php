@@ -69,5 +69,9 @@ class AppServiceProvider extends ServiceProvider
             ->needs(\Alterindonesia\Procurex\Interfaces\RestServiceInterface::class)
             ->give(\App\Services\MasterData\ServiceManagement\ServiceEloquent::class);
         # End Service Management
+
+        $this->app->when(\App\Http\Controllers\MasterData\EmployeeManagement\EmployeeController::class)
+            ->needs(\Alterindonesia\Procurex\Interfaces\RestServiceInterface::class)
+            ->give(\App\Services\MasterData\EmployeeManagement\EmployeeServiceEloquent::class);
     }
 }
