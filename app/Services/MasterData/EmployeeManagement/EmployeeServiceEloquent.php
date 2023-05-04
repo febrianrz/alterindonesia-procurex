@@ -75,11 +75,11 @@ class EmployeeServiceEloquent extends MasterDataServiceEloquent
         }
 
         // check employee data
-        if (!$employee->isEmpty() && (is_null($employee[0]->sup_emp_no) || $employee[0]->sup_emp_no == "")) {
+        if ($employee->isEmpty() || (is_null($employee[0]->sup_emp_no) || $employee[0]->sup_emp_no == "")) {
             $result["code"] = JsonResponse::HTTP_NOT_FOUND;
             $result["message"] = __("{$this->messageKey}.not_found");
+            $result['status'] = false;
         }
-
         // check status
         if ($result["status"]) {
             // set employee data
