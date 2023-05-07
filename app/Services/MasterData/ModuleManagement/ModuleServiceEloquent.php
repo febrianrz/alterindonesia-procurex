@@ -26,7 +26,7 @@ class ModuleServiceEloquent extends MasterDataServiceEloquent
         parent::__construct($model, $resource);
 
         // set spatie query builder params
-        $this->defaultAllowedFilter = ["menus.name"];
+        $this->defaultAllowedFilter = ["menus.name","status"];
         $this->defaultAllowedIncludes = ["menus","menus.submenus"];
         $this->defaultAllowedSorts = ["menus.name","menus.order_no","menus.submenus.name","menus.submenus.order_no"];
     }
