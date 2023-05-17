@@ -38,7 +38,7 @@ class LoginController extends Controller
     public function profile(): \Illuminate\Http\JsonResponse
     {
         try {
-            $user = Auth::user();
+            $user = new UserResource(User::find(Auth::user()->id));
             return $this->responseSuccess("Success",$user);
         } catch (\Exception $e){
             return $this->responseError($e);

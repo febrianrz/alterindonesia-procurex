@@ -26,6 +26,7 @@ class UserResource extends JsonResource
             'consumer_id'=> $this->consumer_id,
             'employee'=> $this->employee,
             'roles' => LoginRoleResource::collection($this->roles()->get()),
+            'has_roles'=> $this->roles()->get()->pluck('code'),
             "action"    => $this->action($request)
         ];
     }
