@@ -9,8 +9,10 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\MasterData\MasterDataServiceEloquent;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
 
 class UserServiceEloquent extends MasterDataServiceEloquent
 {
@@ -86,5 +88,22 @@ class UserServiceEloquent extends MasterDataServiceEloquent
         $model->fill($data);
 
         return $model;
+    }
+
+    protected function overrideAllowedFilters(): ?array
+    {
+        return [
+            'username',
+            'name',
+            'email',
+            'company_code',
+            AllowedFilter::callback('is_planner', function (Builder $query, $value) {
+                $value = (bool) $value;
+
+                if ($value) {
+                    $query->has('planner');
+                }
+            })
+        ];
     }
 }
