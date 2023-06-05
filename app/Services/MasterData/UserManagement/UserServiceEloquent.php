@@ -3,6 +3,7 @@
 
 namespace App\Services\MasterData\UserManagement;
 
+use Alterindonesia\Procurex\Filters\FilterDate;
 use App\Http\Resources\PermissionResource;
 use App\Http\Resources\UserResource;
 use App\Models\Permission;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class UserServiceEloquent extends MasterDataServiceEloquent
 {
@@ -25,6 +27,37 @@ class UserServiceEloquent extends MasterDataServiceEloquent
     public function __construct(User $model, $resource = UserResource::class)
     {
         parent::__construct($model, $resource);
+    }
+
+    public function list(Request $request): array
+    {
+        $query = QueryBuilder::for($this->model)
+            ->allowedFields('id', ...$this->model->getFillable())
+            ->allowedFilters($this->overrideAllowedFilters() ?? [
+                AllowedFilter::custom('created_at', new FilterDate()),
+                AllowedFilter::custom('updated_at', new FilterDate()),
+                AllowedFilter::trashed(),
+                ...$this->model->getFillable(),
+                ...$this->defaultAllowedFilter,
+            ])
+            ->defaultSort($this->model->getKeyName())
+            ->allowedSorts(
+                ...$this->defaultAllowedSorts,
+                ...$this->model->getFillable()
+            )
+            ->with('planner')
+            ->allowedIncludes($this->defaultAllowedIncludes);
+
+        if ($request->boolean('filter.is_planner')) {
+            $this->result['data'] = $query
+                ->limit($request->query('perPage', $this->perPage))
+                ->get()
+                ->filter(fn (User $user) => $user->planner !== null);
+        } else {
+            $this->result['data'] = $query->paginate($request->query('perPage', $this->perPage));
+        }
+
+        return $this->result;
     }
 
     /**
@@ -97,13 +130,7 @@ class UserServiceEloquent extends MasterDataServiceEloquent
             'name',
             'email',
             'company_code',
-            AllowedFilter::callback('is_planner', function (Builder $query, $value) {
-                $value = (bool) $value;
-
-                if ($value) {
-                    $query->has('planner');
-                }
-            })
+            AllowedFilter::callback('is_planner', function (Builder $query, $value) {}),
         ];
     }
 }
