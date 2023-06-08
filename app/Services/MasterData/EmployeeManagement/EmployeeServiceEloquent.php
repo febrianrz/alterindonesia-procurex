@@ -104,10 +104,14 @@ class EmployeeServiceEloquent extends MasterDataServiceEloquent
         ];
 
         // Checking Grade First
-        $grade = request()->input('level');
-        $arrGrade = [];
-        if($grade === "VP") $arrGrade = ['2A','2B'];
-        else if($grade === "SVP") $arrGrade = ['1A','1B'];
+        $grade = request()?->input('level');
+        $arrGrade = match ($grade) {
+            "AVP" => ['3A', '3B'],
+            "VP" => ['2A', '2B'],
+            "SVP" => ['1A', '1B'],
+            default => [],
+        };
+
         if(count($arrGrade) === 0) {
             $result["status"] = false;
             $result["code"] = JsonResponse::HTTP_BAD_REQUEST;
