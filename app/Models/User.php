@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -50,6 +51,11 @@ class User extends Authenticatable
 
     public function company(){
         return $this->belongsTo(Company::class,'company_code','code','company_code');
+    }
+
+    public function planner(): HasOne
+    {
+        return $this->hasOne(Planner::class, 'emp_no', 'username');
     }
 
     public function generalPlanner() {

@@ -78,6 +78,21 @@ return [
             'sslmode' => 'prefer',
         ],
 
+        'pgsql_master_data' => [
+            'driver' => 'pgsql',
+            'url' => env('MASTER_DATA_DATABASE_URL'),
+            'host' => env('MASTER_DATA_DB_HOST', '127.0.0.1'),
+            'port' => env('MASTER_DATA_DB_PORT', '5432'),
+            'database' => env('MASTER_DATA_DB_DATABASE', 'forge'),
+            'username' => env('MASTER_DATA_DB_USERNAME', 'forge'),
+            'password' => env('MASTER_DATA_DB_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'search_path' => 'public',
+            'sslmode' => 'prefer',
+        ],
+
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'url' => env('DATABASE_URL'),
