@@ -103,24 +103,40 @@ class EmployeeServiceEloquent extends MasterDataServiceEloquent
             "data"      => collect(),
         ];
 
+        // Checking Grade First
+        $grade = request()->input('level');
+        $arrGrade = [];
+        if($grade === "VP") $arrGrade = ['2A','2B'];
+        else if($grade === "SVP") $arrGrade = ['1A','1B'];
+        if(count($arrGrade) === 0) {
+            $result["status"] = false;
+            $result["code"] = JsonResponse::HTTP_BAD_REQUEST;
+            $result["message"] = __("Invalid Grade");
+            return $result;
+        }
+
+        $employee = null;
         // find superior
         $superior = $this->model->where("emp_no", $employeeNumber)->get();
-        if ($superior->isEmpty() ||
-            (!$superior->isEmpty() && !in_array($superior[0]->emp_grade, ["2A", "2B"]))
-        ) {
-            $result["status"] = false;
-            $result["code"] = JsonResponse::HTTP_NOT_FOUND;
-            $result["message"] = __("{$this->messageKey}.not_found");
 
-            if (!$superior->isEmpty()) {
-                $result["data"] = $superior;
+        if(!$superior->isEmpty() && in_array($superior[0]->emp_grade,$arrGrade)) {
+            $employee = $superior;
+        }
+
+        // find layer2 superior
+        if(!$employee){
+            $superiorLayer2 = $this->model->where('emp_no',$superior[0]->sup_emp_no)->get();
+            if(!$superiorLayer2->isEmpty() && in_array($superiorLayer2[0]->emp_grade,$arrGrade)) {
+                $employee = $superiorLayer2;
             }
         }
 
-        // check status
-        if ($result["status"]) {
-            // set employee data
-            $result["data"] = $superior;
+        if($employee){
+            $result['data'] = $employee;
+        } else {
+            $result["status"] = false;
+            $result["code"] = JsonResponse::HTTP_NOT_FOUND;
+            $result["message"] = __("{$this->messageKey}.not_found");
         }
 
         return $result;
