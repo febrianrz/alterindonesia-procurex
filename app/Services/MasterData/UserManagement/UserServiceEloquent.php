@@ -52,7 +52,7 @@ class UserServiceEloquent extends MasterDataServiceEloquent
             $this->result['data'] = $query
                 ->limit($request->query('perPage', $this->perPage))
                 ->get()
-                ->filter(fn (User $user) => $user->planner->level === $request->input('filter.planner_level'));
+                ->filter(fn (User $user) => $user->planner?->level === $request->input('filter.planner_level'));
         } else {
             $this->result['data'] = $query->paginate($request->query('perPage', $this->perPage));
         }
