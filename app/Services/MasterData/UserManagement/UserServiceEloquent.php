@@ -4,9 +4,11 @@
 namespace App\Services\MasterData\UserManagement;
 
 use Alterindonesia\Procurex\Filters\FilterDate;
+use App\Enums\PlannerLevel;
 use App\Http\Resources\PermissionResource;
 use App\Http\Resources\UserResource;
 use App\Models\Permission;
+use App\Models\Planner;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\MasterData\MasterDataServiceEloquent;
@@ -31,6 +33,10 @@ class UserServiceEloquent extends MasterDataServiceEloquent
 
     public function list(Request $request): array
     {
+        $plannerEmpNoList = $request->filled('filter.planner_level')
+            ? Planner::where('level', $request->input('filter.planner_level'))->pluck('emp_no')
+            : null;
+
         $query = QueryBuilder::for($this->model)
             ->allowedFields('id', ...$this->model->getFillable())
             ->allowedFilters($this->overrideAllowedFilters() ?? [
@@ -48,11 +54,11 @@ class UserServiceEloquent extends MasterDataServiceEloquent
             ->with('planner')
             ->allowedIncludes($this->defaultAllowedIncludes);
 
-        if ($request->filled('filter.planner_level')) {
-            $this->result['data'] = $query->get()->filter(fn (User $user) => $user->planner?->level->value === $request->input('filter.planner_level'));
-        } else {
-            $this->result['data'] = $query->paginate($request->query('perPage', $this->perPage));
+        if ($plannerEmpNoList) {
+            $query->whereIn('username', $plannerEmpNoList);
         }
+
+        $this->result['data'] = $query->paginate($request->query('perPage', $this->perPage));
 
         return $this->result;
     }
