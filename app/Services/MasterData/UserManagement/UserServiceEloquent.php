@@ -49,10 +49,7 @@ class UserServiceEloquent extends MasterDataServiceEloquent
             ->allowedIncludes($this->defaultAllowedIncludes);
 
         if ($request->filled('filter.planner_level')) {
-            $this->result['data'] = $query
-                ->limit($request->query('perPage', $this->perPage))
-                ->get()
-                ->filter(fn (User $user) => $user->planner?->level === $request->input('filter.planner_level'));
+            $this->result['data'] = $query->get()->filter(fn (User $user) => $user->planner?->level->value === $request->input('filter.planner_level'));
         } else {
             $this->result['data'] = $query->paginate($request->query('perPage', $this->perPage));
         }
