@@ -3,8 +3,8 @@
 
 namespace App\Services\MasterData\UserManagement;
 
+use Alterindonesia\Procurex\Facades\GlobalHelper;
 use Alterindonesia\Procurex\Filters\FilterDate;
-use App\Enums\PlannerLevel;
 use App\Http\Resources\PermissionResource;
 use App\Http\Resources\UserResource;
 use App\Models\Permission;
@@ -15,6 +15,7 @@ use App\Services\MasterData\MasterDataServiceEloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -33,9 +34,8 @@ class UserServiceEloquent extends MasterDataServiceEloquent
 
     public function list(Request $request): array
     {
-        $plannerEmpNoList = $request->filled('filter.planner_level')
-            ? Planner::where('level', $request->input('filter.planner_level'))->pluck('emp_no')
-            : null;
+
+        $plannerEmpNoList = $this->getPlannerEmpNoListByFilter($request);
 
         $query = QueryBuilder::for($this->model)
             ->allowedFields('id', ...$this->model->getFillable())
@@ -134,6 +134,49 @@ class UserServiceEloquent extends MasterDataServiceEloquent
             'email',
             'company_code',
             AllowedFilter::callback('planner_level', function (Builder $query, $value) {}),
+            AllowedFilter::callback('planner_same_division_emp_no', function (Builder $query, $value) {}),
         ];
+    }
+
+    /** @noinspection UnknownColumnInspection */
+    private function getPlannerEmpNoListByFilter(Request $request): ?Collection
+    {
+        if ($request->isNotFilled('filter.planner_same_division_emp_no', 'filter.planner_level')) {
+            return null;
+        }
+
+        $plannerQuery = Planner::query();
+
+        //region filter[planner_same_division_emp_no]
+        $sameDivisionWithPlannerEmpNo = $request->input('filter.planner_same_division_emp_no');
+
+        if ($sameDivisionWithPlannerEmpNo) {
+            $sameDivisionWithPlanner = Planner::with('division')->firstWhere('emp_no', $sameDivisionWithPlannerEmpNo);
+
+            if ($sameDivisionWithPlanner === null) {
+                abort(
+                    GlobalHelper::responseError("filter[planner_same_division_emp_no] is invalid: Planner not found"),
+                    422,
+                );
+            }
+
+            $sameDivisionWithPlanner->division->is_svp
+                ? $plannerQuery->whereRelation('division', 'comp_code', $sameDivisionWithPlanner->division->comp_code)
+                : $plannerQuery->where('division_id', $sameDivisionWithPlanner->division_id);
+
+            $plannerQuery->where('emp_no', '!=', $sameDivisionWithPlannerEmpNo);
+        }
+        //endregion
+
+
+        // filter[planner_same_division_emp_no]
+        $plannerLevel = $request->input('filter.planner_level');
+
+        if ($plannerLevel) {
+            $plannerQuery->where('level', $plannerLevel);
+        }
+
+
+        return $plannerQuery->pluck('emp_no');
     }
 }
