@@ -23,8 +23,8 @@ Route::group(['prefix' => '/api'], function(){
 
 
         });
-        Route::get('/file','\Alterindonesia\Procurex\Controllers\AlterindonesiaProcurexController@getFile');
     });
 
+    Route::get('/file','\Alterindonesia\Procurex\Controllers\AlterindonesiaProcurexController@getFile');
 });
 
