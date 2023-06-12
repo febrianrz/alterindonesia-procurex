@@ -21,6 +21,8 @@ Route::group(['prefix' => '/api'], function(){
             Route::get('/routes','\Alterindonesia\Procurex\Controllers\AlterindonesiaProcurexController@getRouteList');
             Route::post('/routes/assign', '\Alterindonesia\Procurex\Controllers\AlterindonesiaProcurexController@assignRoleRoute')->name('api.route.assign');
 
+
+            Route::get('/file','\Alterindonesia\Procurex\Controllers\AlterindonesiaProcurexController@getFile');
         });
     });
 

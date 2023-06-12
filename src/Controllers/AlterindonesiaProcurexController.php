@@ -88,4 +88,21 @@ class AlterindonesiaProcurexController extends BaseController
             return GlobalHelper::responseError($e->getMessage());
         }
     }
+
+    public function getFile(Request $request): \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\JsonResponse
+    {
+        $filePath = $request->query('file');
+
+        if (empty($filePath)) {
+            return response()->json(['error' => 'File path is required.'], 400);
+        }
+
+        $filePath = storage_path($filePath);
+
+        if (file_exists($filePath)) {
+            return response()->file($filePath);
+        } else {
+            return response()->json(['error' => 'File not found.'], 404);
+        }
+    }
 }
