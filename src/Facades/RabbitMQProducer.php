@@ -11,6 +11,9 @@ use PhpAmqpLib\Message\AMQPMessage;
 
 class RabbitMQProducer
 {
+    public static $EVENT_TYPE_TASK = 'TASK';
+    public static $EVENT_TYPE_NOTIFICATION = 'NOTIFICATION';
+
     /**
      * @var AMQPStreamConnection
      */
@@ -80,6 +83,9 @@ class RabbitMQProducer
         $exchange = config('procurex.rabbitMQ.exchange');
         $routingKey = config('procurex.rabbitMQ.routing_key');
         try {
+            if(!in_array($task->type(),[RabbitMQProducer::$EVENT_TYPE_TASK,RabbitMQProducer::$EVENT_TYPE_NOTIFICATION])){
+                throw new \Exception("RabbitMQProducer: publishTask error - ex: {$exchange} - routing: {$routingKey} msg: invalid type");
+            }
             $this->channel = $this->connection->channel();
 
             $this->channel->exchange_declare(
@@ -89,8 +95,12 @@ class RabbitMQProducer
                 true,
                 false
             );
+            $payload = [
+                'type'    => $task->type(),
+                'data'    => $task->payload(),
+            ];
             $payload = new AMQPMessage(
-                json_encode($task->payload()),
+                json_encode($payload),
                 array('content_type' => 'application/json', 'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT)
             );
             $this->channel->basic_publish(
@@ -109,7 +119,7 @@ class RabbitMQProducer
         }
     }
 
-    public static function sendTask(TaskInterface $task){
+    public static function send(TaskInterface $task){
         $rb = new RabbitMQProducer();
         $rb->publishTask($task);
     }
