@@ -36,6 +36,41 @@ class RabbitMQProducer
         }
     }
 
+    /**
+     * @throws \Exception
+     */
+    public function test (): void
+    {
+        try {
+            $this->channel = $this->connection->channel();
+            $this->channel->exchange_declare(
+                config('procurex.rabbitMQ.exchange'),
+                AMQPExchangeType::DIRECT,
+                false,
+                true,
+                false
+            );
+            $payload = new AMQPMessage(
+                json_encode([
+                    'message'   => 'test message procurex',
+                ]),
+                array('content_type' => 'application/json', 'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT)
+            );
+            $this->channel->basic_publish(
+                $payload,
+                config('procurex.rabbitMQ.exchange'),
+                config('procurex.rabbitMQ.routing_key'),
+            );
+
+            $this->channel->wait_for_pending_acks();
+            // clear connection
+            $this->channel->close();
+            $this->connection->close();
+        } catch (\Exception $e){
+            throw new \Exception($e->getMessage());
+        }
+    }
+
     public function publishTask (TaskInterface $taskInterface): void
     {
         try {
