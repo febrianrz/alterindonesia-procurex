@@ -170,7 +170,8 @@ class EmployeeServiceEloquent extends MasterDataServiceEloquent
             $query->whereHas('roles', function ($query) use($roles){
                 $query->whereIn('name',$roles);
             });
-        })->get();
+        })->where('company',Auth::user()->company_code)
+            ->get();
         if($employee){
             $result['data'] = $employee;
         } else {
