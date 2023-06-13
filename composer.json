@@ -12,7 +12,10 @@
             "name": "Febrian Reza"
         }
     ],
-    "require": {},
+    "require": {
+        "php-amqplib/php-amqplib": "^3.5",
+        "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3"
+    },
     "extra": {
         "laravel": {
             "providers": [
