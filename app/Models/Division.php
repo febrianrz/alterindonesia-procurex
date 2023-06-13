@@ -2,31 +2,37 @@
 
 namespace App\Models;
 
-use App\Enums\PlannerLevel;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Planner extends Model
+/**
+ * @uses Division::purchasingGroups
+ */
+class Division extends Model
 {
     protected $connection = 'pgsql_master_data';
 
-    protected $fillable = [
-        'division_id',
+    protected $fillable = array(
+        'name',
+        'comp_code',
         'purch_group_ids',
         'emp_no',
-        'level',
-    ];
+        'is_svp',
+    );
 
     protected $casts = [
-        'division_id' => 'integer',
         'purch_group_ids' => 'json',
-        'level' => PlannerLevel::class,
+        'is_svp' => 'boolean',
     ];
 
-    public function division(): BelongsTo
+    protected $attributes = [
+        'is_svp' => false,
+    ];
+
+    public function company(): BelongsTo
     {
-        return $this->belongsTo(Division::class);
+        return $this->belongsTo(Company::class, 'comp_code', 'comp_code');
     }
 
     public function employee(): BelongsTo

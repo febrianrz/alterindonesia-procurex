@@ -12,6 +12,7 @@ use Illuminate\Http\JsonResponse;
 
 class EmployeeServiceEloquent extends MasterDataServiceEloquent
 {
+    private static string $KODE_LEVEL_VP_ANGGARAN = "VP Anggaran";
     /**
      * EmployeeServiceEloquent constructor.
      *
@@ -34,14 +35,16 @@ class EmployeeServiceEloquent extends MasterDataServiceEloquent
             return $employeeData;
         }
         $employee = $employeeData["data"];
-
-        // find first superior
-        $superiorData = $this->findSuperiorByEmployeeNumber($employee->sup_emp_no);
-        if (!$superiorData["status"] && !$superiorData["data"]->isEmpty()) {
-            // find second superior
-            $superiorData = $this->findSuperiorByEmployeeNumber($superiorData["data"][0]->sup_emp_no);
+        if(request()->input('level') && request()->input('level') === self::$KODE_LEVEL_VP_ANGGARAN){
+            $superiorData = $this->findEmployeeHasRoles($employee, [self::$KODE_LEVEL_VP_ANGGARAN]);
+        } else {
+            // find first superior
+            $superiorData = $this->findSuperiorByEmployeeNumber($employee->sup_emp_no);
+            if (!$superiorData["status"] && !$superiorData["data"]->isEmpty()) {
+                // find second superior
+                $superiorData = $this->findSuperiorByEmployeeNumber($superiorData["data"][0]->sup_emp_no);
+            }
         }
-
         // check final result
         if (!$superiorData["status"]) {
             return $superiorData;
@@ -51,6 +54,7 @@ class EmployeeServiceEloquent extends MasterDataServiceEloquent
         $this->result["data"] = $superiorData["data"];
 
         return $this->result;
+
     }
 
     /**
@@ -135,6 +139,38 @@ class EmployeeServiceEloquent extends MasterDataServiceEloquent
             }
         }
 
+        if($employee){
+            $result['data'] = $employee;
+        } else {
+            $result["status"] = false;
+            $result["code"] = JsonResponse::HTTP_NOT_FOUND;
+            $result["message"] = __("{$this->messageKey}.not_found");
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param string $employeeNumber
+     * @return array
+     */
+    private function findEmployeeHasRoles(string $employeeNumber, array $roles): array
+    {
+        // set default result
+        $result = [
+            "status"    => true,
+            "code"      => "",
+            "message"   => "",
+            "data"      => collect(),
+        ];
+
+        $employee = null;
+        // find superior
+        $employee = Employee::whereHas('user', function ($query) use($roles){
+            $query->whereHas('roles', function ($query) use($roles){
+                $query->whereIn('name',$roles);
+            });
+        })->get();
         if($employee){
             $result['data'] = $employee;
         } else {
