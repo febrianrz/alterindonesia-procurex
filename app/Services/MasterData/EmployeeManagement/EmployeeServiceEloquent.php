@@ -45,10 +45,12 @@ class EmployeeServiceEloquent extends MasterDataServiceEloquent
                 $superiorData = $this->findSuperiorByEmployeeNumber($superiorData["data"][0]->sup_emp_no);
             }
         }
+
         // check final result
         if (!$superiorData["status"]) {
             return $superiorData;
         }
+
 
         // set superior data
         $this->result["data"] = $superiorData["data"];
@@ -138,6 +140,16 @@ class EmployeeServiceEloquent extends MasterDataServiceEloquent
                 $employee = $superiorLayer2;
             }
         }
+
+        //find layer3
+        if($this->model->company !== 'A000' && !$employee){
+            $superiorLayer3 = $this->model->where('emp_no',$superiorLayer2[0]->sup_emp_no)->get();
+            if(!$superiorLayer3->isEmpty() && in_array($superiorLayer3[0]->emp_grade,$arrGrade)) {
+                $employee = $superiorLayer3;
+            }
+        }
+
+
 
         if($employee){
             $result['data'] = $employee;
