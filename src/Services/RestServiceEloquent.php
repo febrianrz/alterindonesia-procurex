@@ -8,6 +8,7 @@ use Alterindonesia\Procurex\Interfaces\RestServiceInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 use Symfony\Component\HttpFoundation\Response;
@@ -109,22 +110,36 @@ class RestServiceEloquent implements RestServiceInterface
      */
     public function create(Request $request): array
     {
-        // generate new data
-        $newData = $this->generateNewData($request);
+        try {
+            DB::beginTransaction();
+            // generate new data
+            $newData = $this->generateNewData($request);
 
-        // create data
-        $this->model = $this->model->fill($newData);
-        $this->beforeStore($this->model,$request);
-        $this->model->save();
-        $data = $this->model;
-        $this->afterStore($data,$request);
+            // create data
+            $this->model = $this->model->fill($newData);
+            $this->beforeStore($this->model, $request);
+            $this->model->save();
+            $data = $this->model;
+            $this->afterStore($data, $request);
 
-        // set success result
-        $this->result["message"] = __("{$this->messageKey}.created");
-        $this->result["data"] = new $this->resource($data);
+            // set success result
+            $this->result["message"] = __("{$this->messageKey}.created");
+            $this->result["data"] = new $this->resource($data);
 
-        // return result
-        return $this->result;
+            // return result
+            DB::commit();
+            return $this->result;
+        } catch (\Exception $e) {
+            DB::rollBack($e);
+            report($e);
+            // set failed result
+            $this->result["status"] = false;
+            $this->result["code"] = Response::HTTP_INTERNAL_SERVER_ERROR;
+            $this->result["message"] = $e;
+
+            // return result
+            return $this->result;
+        }
     }
 
     /**
@@ -161,31 +176,46 @@ class RestServiceEloquent implements RestServiceInterface
      */
     public function update(string $id, Request $request): array
     {
-        // find data by id
-        $data = $this->find($id);
+        try {
 
-        // check data existence
-        if (!is_null($data)) {
-            // set data
-            $this->setUpdatedData($data, $request);
-            $this->beforeUpdate($data,$request);
+            DB::beginTransaction();
+            // find data by id
+            $data = $this->find($id);
 
-            // update data
-            $data->save();
-            $this->afterUpdate($data,$request);
+            // check data existence
+            if (!is_null($data)) {
+                // set data
+                $this->setUpdatedData($data, $request);
+                $this->beforeUpdate($data, $request);
 
-            // set success result
-            $this->result["message"] = __("{$this->messageKey}.updated");
-            $this->result["data"] = new $this->resource($data);
-        } else {
+                // update data
+                $data->save();
+                $this->afterUpdate($data, $request);
+
+                // set success result
+                $this->result["message"] = __("{$this->messageKey}.updated");
+                $this->result["data"] = new $this->resource($data);
+            } else {
+                // set failed result
+                $this->result["status"] = false;
+                $this->result["code"] = Response::HTTP_NOT_FOUND;
+                $this->result["message"] = __("{$this->messageKey}.not_found");
+            }
+
+            DB::commit();
+            // return result
+            return $this->result;
+        } catch (\Exception $e) {
+            DB::rollBack($e);
+            report($e);
             // set failed result
             $this->result["status"] = false;
-            $this->result["code"] = Response::HTTP_NOT_FOUND;
-            $this->result["message"] = __("{$this->messageKey}.not_found");
-        }
+            $this->result["code"] = Response::HTTP_INTERNAL_SERVER_ERROR;
+            $this->result["message"] = $e;
 
-        // return result
-        return $this->result;
+            // return result
+            return $this->result;
+        }
     }
 
     /**
