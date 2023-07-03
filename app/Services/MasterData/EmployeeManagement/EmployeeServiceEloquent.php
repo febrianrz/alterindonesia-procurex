@@ -134,7 +134,7 @@ class EmployeeServiceEloquent extends MasterDataServiceEloquent
         }
 
         // find layer2 superior
-        if(!$employee){
+        if(!$employee && count($superior) > 0){
             $superiorLayer2 = $this->model->where('emp_no',$superior[0]->sup_emp_no)->get();
             if(!$superiorLayer2->isEmpty() && in_array($superiorLayer2[0]->emp_grade,$arrGrade)) {
                 $employee = $superiorLayer2;
