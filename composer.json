@@ -1,31 +1,4 @@
 {
-<<<<<<< HEAD
-    "name": "alterindonesia/procurex",
-    "description": "ProcureX package for microservices",
-    "license": "proprietary",
-    "autoload": {
-        "psr-4": {
-            "Alterindonesia\\Procurex\\": "src/"
-        }
-    },
-    "authors": [
-        {
-            "name": "Febrian Reza"
-        }
-    ],
-    "require": {
-        "php-amqplib/php-amqplib": "^3.5",
-        "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3"
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Alterindonesia\\Procurex\\Providers\\AlterindonesiaProcurexProvider"
-            ],
-            "aliases": {}
-        }
-    }
-=======
     "name": "laravel/laravel",
     "type": "project",
     "description": "The Laravel Framework.",
@@ -104,5 +77,4 @@
     },
     "minimum-stability": "dev",
     "prefer-stable": true
->>>>>>> 6eb42a6554bce20f6001792d21f12b0517ba69ed
 }

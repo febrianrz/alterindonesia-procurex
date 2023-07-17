@@ -1,6 +1,4 @@
-<<<<<<< HEAD
 .idea/
-=======
 /node_modules
 /public/build
 /public/hot
@@ -22,4 +20,3 @@ yarn-error.log
 /.vscode
 rr
 .rr.yaml
->>>>>>> 6eb42a6554bce20f6001792d21f12b0517ba69ed
