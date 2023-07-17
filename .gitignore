@@ -1,1 +1,25 @@
+<<<<<<< HEAD
 .idea/
+=======
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/vendor
+/packages
+.env
+.env.backup
+.env.production
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+auth.json
+npm-debug.log
+yarn-error.log
+/.fleet
+/.idea
+/.vscode
+rr
+.rr.yaml
+>>>>>>> 6eb42a6554bce20f6001792d21f12b0517ba69ed

@@ -1,0 +1,23 @@
+version: '3'
+
+networks:
+    default:
+        name: procurex_sso_api_net
+        external: true
+
+volumes:
+    procurex_sso_api_storage_volume:
+    procurex_sso_api_src_volume:
+
+services:
+    app:
+        image: sso/procurex:latest
+        build: '.'
+        container_name: procurex_sso_api_php
+        ports:
+            -   "9001:9000"
+        volumes:
+            - ".env:/var/www/html/.env:rw"
+            - "procurex_sso_api_src_volume:/var/www/html"
+            - "procurex_sso_api_storage_volume:/var/www/html/storage/public"
+#            - "procurex_sso_api_nginx_volume:/nginx/"
