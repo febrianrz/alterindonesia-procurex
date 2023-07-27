@@ -11,7 +11,7 @@ class GlobalHelper
 {
     public static function responseSuccess($message, $data=null, $code=200, $resource=null): AnonymousCollection|JsonResponse
     {
-        if ($resource) {
+        if ($resource && !is_object($data)) {
             $canStore = method_exists($resource,'canStore');
             if($canStore){
                 $canStore = $resource::canStore();
