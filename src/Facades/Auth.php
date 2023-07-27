@@ -110,6 +110,15 @@ class Auth extends \Illuminate\Support\Facades\Auth {
         return $roles;
     }
 
+    public function pluckRoleCode() : array
+    {
+        $roles = [];
+        foreach ($this->roles as $role) {
+            $roles[] = $role->code;
+        }
+        return $roles;
+    }
+
     public function id(): int {
         return $this->id;
     }

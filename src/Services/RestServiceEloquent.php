@@ -57,8 +57,10 @@ class RestServiceEloquent implements RestServiceInterface
      * @param Model $model
      * @param string $resource
      */
-    public function __construct(Model $model, string $resource = JsonResource::class)
-    {
+    public function __construct(
+        Model $model,
+        string $resource = JsonResource::class
+    ) {
         // Initiation
         $this->model = $model;
         $this->resource = $resource;
@@ -148,11 +150,11 @@ class RestServiceEloquent implements RestServiceInterface
      */
     public function detail(string $id, array $relationship = []): array
     {
+        dd($this->model);
         // find data by id
         $data = $this->model->with($relationship)
             ->where($this->model->getKeyName(), "=", $id)
             ->first();
-
         // check data existence
         if ($data) {
             // set success result
