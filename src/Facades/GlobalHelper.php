@@ -2,6 +2,7 @@
 namespace Alterindonesia\Procurex\Facades;
 
 use Alterindonesia\Procurex\Resources\AnonymousCollection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -11,7 +12,7 @@ class GlobalHelper
 {
     public static function responseSuccess($message, $data=null, $code=200, $resource=null): AnonymousCollection|JsonResponse
     {
-        if ($resource && !is_object($data)) {
+        if ($resource && !($data instanceof Model)) {
             $canStore = method_exists($resource,'canStore');
             if($canStore){
                 $canStore = $resource::canStore();
