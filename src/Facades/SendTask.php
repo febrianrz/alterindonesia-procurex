@@ -131,5 +131,15 @@ class SendTask {
         }
     }
 
+    public static function sendWhatsapp($to,$message,$type='01'): void
+    {
+        (new SendTask())->whatsapp($to,$message,$type);
+    }
+
+    public static function sendEmail($to,$subject,$message,$cc = [],$bcc = [],$attachments = []): void
+    {
+        (new SendTask())->email($to,$subject,$message,$cc,$bcc,$attachments);
+    }
+
 
 }
