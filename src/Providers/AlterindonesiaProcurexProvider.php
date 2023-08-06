@@ -2,6 +2,7 @@
 
 namespace Alterindonesia\Procurex\Providers;
 
+use Alterindonesia\Procurex\Console\ClearLogCommand;
 use Alterindonesia\Procurex\Console\CreateTaskNotifikasiCommand;
 use Alterindonesia\Procurex\Middleware\AuthJWTMiddleware;
 use Illuminate\Support\ServiceProvider;
@@ -34,10 +35,10 @@ class AlterindonesiaProcurexProvider extends ServiceProvider
         $this->app['router']->aliasMiddleware('auth.jwt', AuthJWTMiddleware::class);
         $this->app['router']->aliasMiddleware('log.activity', AuthJWTMiddleware::class);
 
-//        if($this->app->runningInConsole()) {
-//            $this->commands([
-//                CreateTaskNotifikasiCommand::class
-//            ]);
-//        }
+        if($this->app->runningInConsole()) {
+            $this->commands([
+                ClearLogCommand::class
+            ]);
+        }
     }
 }
