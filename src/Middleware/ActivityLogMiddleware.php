@@ -25,7 +25,8 @@ class ActivityLogMiddleware
         return $response;
     }
 
-    private function writeLog(Request $request, $response) {
+    private function writeLog(Request $request, $response): void
+    {
         $fullUrl = url()->full();
         $uri = $request->path();
         $routeName = Route::currentRouteName();

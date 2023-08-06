@@ -55,7 +55,7 @@ class GlobalHelper
         ], $code);
     }
 
-    public static function cleanUserLogs($lastDays=30): void
+    public static function clearUserLogs($lastDays=30): void
     {
         if(\Schema::hasTable('user_logs')){
             DB::table('user_logs')
