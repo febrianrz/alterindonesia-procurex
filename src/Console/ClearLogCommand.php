@@ -11,7 +11,7 @@ class ClearLogCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'clear:logs';
+    protected $signature = 'procurex:clear-log';
 
     /**
      * The console command description.
