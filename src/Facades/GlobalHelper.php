@@ -55,8 +55,11 @@ class GlobalHelper
         ], $code);
     }
 
-    public static function clearUserLogs($lastDays=30): void
+    public static function clearUserLogs($lastDays=0): void
     {
+        if($lastDays === 0){
+            $lastDays = config('procurex.clear_log_days',30);
+        }
         if(\Schema::hasTable('user_logs')){
             DB::table('user_logs')
                 ->where('created_at', '<', now()->subDays($lastDays))

@@ -3,6 +3,7 @@ namespace Alterindonesia\Procurex\Middleware;
 
 use Alterindonesia\Procurex\Facades\Auth;
 use Closure;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Alterindonesia\Procurex\Models\UserLog;
@@ -27,6 +28,12 @@ class ActivityLogMiddleware
 
     private function writeLog(Request $request, $response): void
     {
+        $exception = $response->exception;
+        if(!\Schema::hasColumn('user_logs','exception')){
+            \Schema::table('user_logs',function (Blueprint $table){
+                $table->longText('exception')->nullable();
+            });
+        }
         $fullUrl = url()->full();
         $uri = $request->path();
         $routeName = Route::currentRouteName();
@@ -35,7 +42,7 @@ class ActivityLogMiddleware
         $method = $request->method();
         $response = (array)json_decode($response->getContent());
         $user = $this->getUser($request);
-        UserLog::create([
+        $logId = UserLog::create([
             'user_id'       => $user->id,
             'username'      => $user->username,
             'email'         => $user->email,
@@ -48,10 +55,25 @@ class ActivityLogMiddleware
             'route_action'  => $routeAction,
             'payload'       => $payload,
             'response'      => $response,
+            'exception'     => $exception ?? '',
             'agent'         => $request->userAgent(),
             'ip'            => $request->ip()
         ]);
+        if(!config('procurex.is_disable_error_through_discord',true)) {
+            try {
+                $hookUrl = "https://discord.com/api/webhooks/1137646975685234749/bg2jVge6T-3DLJ2_bHMJikEmOr3N6otXY9XApUNHZEecmc8gUCMp6UywwKipEqmNkwM8";
+                $serviceName = config('procurex.service_name', 'Procurex');
+                $http = \Http::withHeaders([
+                    'Content-Type' => 'application/json'
+                ])->timeout(3)->post($hookUrl, [
+                    'content' => "Error Handler {$serviceName} ".(env('APP_DEBUG') ? 'Development' : 'Production')." with Log ID: {$logId->id}"
+                ]);
+            } catch (\Exception $e) {
+                dd($e->getMessage());
+            }
+        }
     }
+
 
     private function getUser(Request $request): object
     {
