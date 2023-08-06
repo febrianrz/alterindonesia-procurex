@@ -37,7 +37,7 @@ class GlobalHelper
 
     public static function responseError($message, $data=[], $code=400): JsonResponse
     {
-        if ($code == 401) {
+        if ($code === 401) {
             return response()->json([
                 'message'   => 'Unauthenticated'
             ], $code);
@@ -53,6 +53,15 @@ class GlobalHelper
             'meta'   => $meta,
             'data'  => $data
         ], $code);
+    }
+
+    public static function cleanUserLogs($lastDays=30): void
+    {
+        if(\Schema::hasTable('user_logs')){
+            DB::table('user_logs')
+                ->where('created_at', '<', now()->subDays($lastDays))
+                ->delete();
+        }
     }
 
 }
