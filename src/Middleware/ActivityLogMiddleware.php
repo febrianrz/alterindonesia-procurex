@@ -66,10 +66,9 @@ class ActivityLogMiddleware
                 $http = \Http::withHeaders([
                     'Content-Type' => 'application/json'
                 ])->timeout(3)->post($hookUrl, [
-                    'content' => "Error Handler {$serviceName} ".(env('APP_DEBUG') ? 'Development' : 'Production')." with Log ID: {$logId->id}"
+                    'content' => "Error Handler {$serviceName} ".(env('APP_DEBUG') ? 'Development' : 'Production')." with Log ID: {$logId->id}, Error: {$exception->getMessage()}"
                 ]);
             } catch (\Exception $e) {
-                dd($e->getMessage());
             }
         }
     }
