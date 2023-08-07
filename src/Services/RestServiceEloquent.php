@@ -111,7 +111,7 @@ class RestServiceEloquent implements RestServiceInterface
     public function create(Request $request): array
     {
         try {
-            DB::beginTransaction();
+//            DB::beginTransaction();
             // generate new data
             $newData = $this->generateNewData($request);
 
@@ -127,10 +127,10 @@ class RestServiceEloquent implements RestServiceInterface
             $this->result["data"] = new $this->resource($data);
 
             // return result
-            DB::commit();
+//            DB::commit();
             return $this->result;
         } catch (\Exception $e) {
-            DB::rollBack($e);
+//            DB::rollBack($e);
             report($e);
             // set failed result
             $this->result["status"] = false;
@@ -178,7 +178,7 @@ class RestServiceEloquent implements RestServiceInterface
     {
         try {
 
-            DB::beginTransaction();
+//            DB::beginTransaction();
             // find data by id
             $data = $this->find($id);
 
@@ -202,11 +202,11 @@ class RestServiceEloquent implements RestServiceInterface
                 $this->result["message"] = __("{$this->messageKey}.not_found");
             }
 
-            DB::commit();
+//            DB::commit();
             // return result
             return $this->result;
         } catch (\Exception $e) {
-            DB::rollBack($e);
+//            DB::rollBack($e);
             report($e);
             // set failed result
             $this->result["status"] = false;

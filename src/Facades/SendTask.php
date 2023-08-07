@@ -106,14 +106,7 @@ class SendTask {
         }
     }
 
-    public function email(
-        $to,
-        $subject,
-        $message,
-        $cc = [],
-        $bcc = [],
-        $attachments = [],
-    ): void {
+    public function email($to, $subject, $message, $cc = [], $bcc = [], $attachments = [],): void {
         try {
             $accessToken = config('procurex.access_token',null);
             $payload = [
