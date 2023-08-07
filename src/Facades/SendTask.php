@@ -16,7 +16,7 @@ class SendTask {
     public function __construct()
     {
         if(!config('procurex.service_base_url')) {
-            dd("procurex.service_base_url is not set");
+            return ;
         }
         $this->generateTableIntegrationLogs();
         $this->client = new Client([
@@ -39,22 +39,26 @@ class SendTask {
     }
     public function publishTask(TaskInterface $task, $protocol="http"): void
     {
-        if($protocol == "http")
-            $this->http($task);
-        else {
-            $rabbit = new RabbitMQProducer();
-            $rabbit->publishTask($task);
+        if($task instanceof TaskInterface) {
+            if($protocol == "http")
+                $this->http($task);
+            else {
+                $rabbit = new RabbitMQProducer();
+                $rabbit->publishTask($task);
+            }
         }
+
     }
 
     private function http(TaskInterface $task): void
     {
+        $payload = [
+            'type'    => $task->type(),
+            'data'    => $task->payload(),
+        ];
         try {
             $accessToken = config('procurex.access_token',null);
-            $payload = [
-                'type'    => $task->type(),
-                'data'    => $task->payload(),
-            ];
+
             $this->client->request('post','/api/task/event',[
                 'headers' => [
                     'Content-Type' => "application/json",
@@ -64,7 +68,7 @@ class SendTask {
                 'json'    => $payload
             ]);
         } catch (GuzzleException $e) {
-            echo Message::toString($e->getMessage()).PHP_EOL;
+            \Log::error("Send Task With payload: ".json_encode($payload)." Error:".$e->getMessage());
         }
     }
 
