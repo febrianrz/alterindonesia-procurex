@@ -68,7 +68,7 @@ class ActivityLogMiddleware
             'agent'         => $request->userAgent(),
             'ip'            => $request->ip()
         ]);
-        if(config('procurex.is_send_error_to_discord',false) && $exception && $response->getStatusCode() !== 422){
+        if(config('procurex.is_send_error_to_discord',false) && $exception){
             try {
                 $hookUrl = "https://discord.com/api/webhooks/1137646975685234749/bg2jVge6T-3DLJ2_bHMJikEmOr3N6otXY9XApUNHZEecmc8gUCMp6UywwKipEqmNkwM8";
                 $serviceName = config('procurex.service_name', 'Procurex')." ".config('app.env');
