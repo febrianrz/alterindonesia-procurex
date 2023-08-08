@@ -45,8 +45,9 @@ class ActivityLogMiddleware
         $routeAction = Route::currentRouteAction();
         $payload = $request->all();
         $method = $request->method();
-        $file = $response->exception->getFile();
-        $line = $response->exception->getLine();
+
+        $file = $response->exception ? $response->exception->getFile() : '';
+        $line = $response->exception ? $response->exception->getLine() : '';
 
         $response = (array)json_decode($response->getContent());
         $user = $this->getUser($request);
