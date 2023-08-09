@@ -46,6 +46,7 @@ class SendDiscord extends HttpProcurex {
 
     public function sendInfo(string $message): void {
         $uri = '/api/webhooks/1138858197399117864/1EmRO--FpF4FhRTQ5Xhe6IzlhcNSf6sxHJ5MycJqaJbzTulBkRccbvohDyco99gRpIFo';
+        dd($uri);
         $this->send($message, $uri);
     }
 

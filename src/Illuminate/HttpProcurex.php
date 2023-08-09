@@ -18,7 +18,7 @@ class HttpProcurex {
         }
         $this->generateTableIntegrationLogs();
         $this->client = new Client([
-            'base_uri' => $this,
+            'base_uri' => $baseUrl,
             'on_stats' => function (TransferStats $stats) {
                 $this->guzzleLog($stats);
             }
