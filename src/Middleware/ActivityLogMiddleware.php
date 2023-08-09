@@ -2,6 +2,7 @@
 namespace Alterindonesia\Procurex\Middleware;
 
 use Alterindonesia\Procurex\Facades\Auth;
+use Alterindonesia\Procurex\Facades\SendDiscord;
 use Closure;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
@@ -71,29 +72,15 @@ class ActivityLogMiddleware
             ]);
             if (config('procurex.is_send_error_to_discord', false) && $exception) {
                 try {
-                    $hookUrl = "https://discord.com/api/webhooks/1137646975685234749/bg2jVge6T-3DLJ2_bHMJikEmOr3N6otXY9XApUNHZEecmc8gUCMp6UywwKipEqmNkwM8";
                     $serviceName = config('procurex.service_name', 'Procurex')." ".config('app.env');
-                    $message = $exception ? $exception->getMessage() : '';
-                    $http = \Http::withHeaders([
-                        'Content-Type' => 'application/json'
-                    ])->timeout(3)->post($hookUrl, [
-                        'content' => "Service {$serviceName} \nUser LogID: $logId->id \nFile: $file \nLine: $line \nError: {$message} "
-                    ]);
+                    $messageException = $exception ? $exception->getMessage() : '';
+                    $messageString = "Service {$serviceName} \nUser LogID: $logId->id \nFile: $file \nLine: $line \nError: {$messageException}";
+                    (new SendDiscord())->sendError($messageString);
                 } catch (\Exception $e) {
                 }
             }
         } catch (\Exception $e) {
             \Log::error($e->getMessage());
-            try {
-                $hookUrl = "https://discord.com/api/webhooks/1137646975685234749/bg2jVge6T-3DLJ2_bHMJikEmOr3N6otXY9XApUNHZEecmc8gUCMp6UywwKipEqmNkwM8";
-                $serviceName = config('procurex.service_name', 'Procurex')." ".config('app.env');
-                $http = \Http::withHeaders([
-                    'Content-Type' => 'application/json'
-                ])->timeout(3)->post($hookUrl, [
-                    'content' => "Service {$serviceName} \nFailed to write log \nError: {$e->getMessage()} "
-                ]);
-            } catch (\Exception $e) {
-            }
         }
     }
 
