@@ -28,55 +28,69 @@ class ActivityLogMiddleware
 
     private function writeLog(Request $request, $response): void
     {
-        $exception = method_exists($response->exception) ? $response->exception : null;
-        if(!\Schema::hasColumn('user_logs','exception')){
-            \Schema::table('user_logs',function (Blueprint $table){
-                $table->longText('exception')->nullable();
-            });
-        }
-        if(!\Schema::hasColumn('user_logs','http_code')){
-            \Schema::table('user_logs',function (Blueprint $table){
-                $table->longText('http_code')->nullable();
-            });
-        }
-        $fullUrl = url()->full();
-        $uri = $request->path();
-        $routeName = Route::currentRouteName();
-        $routeAction = Route::currentRouteAction();
-        $payload = $request->all();
-        $method = $request->method();
+        try {
+            $exception = method_exists($response->exception) ? $response->exception : null;
+            if (!\Schema::hasColumn('user_logs', 'exception')) {
+                \Schema::table('user_logs', function (Blueprint $table) {
+                    $table->longText('exception')->nullable();
+                });
+            }
+            if (!\Schema::hasColumn('user_logs', 'http_code')) {
+                \Schema::table('user_logs', function (Blueprint $table) {
+                    $table->longText('http_code')->nullable();
+                });
+            }
+            $fullUrl = url()->full();
+            $uri = $request->path();
+            $routeName = Route::currentRouteName();
+            $routeAction = Route::currentRouteAction();
+            $payload = $request->all();
+            $method = $request->method();
 
-        $file = $exception? $exception->getFile() : '';
-        $line = $exception ? $exception->getLine() : '';
+            $file = $exception ? $exception->getFile() : '';
+            $line = $exception ? $exception->getLine() : '';
 
-        $response = (array)json_decode($response->getContent());
-        $user = $this->getUser($request);
-        $logId = UserLog::create([
-            'user_id'       => $user->id,
-            'username'      => $user->username,
-            'email'         => $user->email,
-            'name'          => $user->name,
-            'company_code'  => $user->company_code,
-            'method'        => $method,
-            'full_url'      => $fullUrl,
-            'uri'           => $uri,
-            'route_name'    => $routeName,
-            'route_action'  => $routeAction,
-            'payload'       => $payload,
-            'response'      => $response,
-            'exception'     => $exception ?? '',
-            'agent'         => $request->userAgent(),
-            'ip'            => $request->ip()
-        ]);
-        if(config('procurex.is_send_error_to_discord',false) && $exception){
+            $response = (array) json_decode($response->getContent());
+            $user = $this->getUser($request);
+            $logId = UserLog::create([
+                'user_id'      => $user->id,
+                'username'     => $user->username,
+                'email'        => $user->email,
+                'name'         => $user->name,
+                'company_code' => $user->company_code,
+                'method'       => $method,
+                'full_url'     => $fullUrl,
+                'uri'          => $uri,
+                'route_name'   => $routeName,
+                'route_action' => $routeAction,
+                'payload'      => $payload,
+                'response'     => $response,
+                'exception'    => $exception ?? '',
+                'agent'        => $request->userAgent(),
+                'ip'           => $request->ip()
+            ]);
+            if (config('procurex.is_send_error_to_discord', false) && $exception) {
+                try {
+                    $hookUrl = "https://discord.com/api/webhooks/1137646975685234749/bg2jVge6T-3DLJ2_bHMJikEmOr3N6otXY9XApUNHZEecmc8gUCMp6UywwKipEqmNkwM8";
+                    $serviceName = config('procurex.service_name', 'Procurex')." ".config('app.env');
+                    $message = $exception ? $exception->getMessage() : '';
+                    $http = \Http::withHeaders([
+                        'Content-Type' => 'application/json'
+                    ])->timeout(3)->post($hookUrl, [
+                        'content' => "Service {$serviceName} \nUser LogID: $logId->id \nFile: $file \nLine: $line \nError: {$message} "
+                    ]);
+                } catch (\Exception $e) {
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error($e->getMessage());
             try {
                 $hookUrl = "https://discord.com/api/webhooks/1137646975685234749/bg2jVge6T-3DLJ2_bHMJikEmOr3N6otXY9XApUNHZEecmc8gUCMp6UywwKipEqmNkwM8";
                 $serviceName = config('procurex.service_name', 'Procurex')." ".config('app.env');
-                $message = $exception ? $exception->getMessage() : '';
                 $http = \Http::withHeaders([
                     'Content-Type' => 'application/json'
                 ])->timeout(3)->post($hookUrl, [
-                    'content' => "Service {$serviceName} \nUser LogID: $logId->id \nFile: $file \nLine: $line \nError: {$message} "
+                    'content' => "Service {$serviceName} \nFailed to write log \nError: {$e->getMessage()} "
                 ]);
             } catch (\Exception $e) {
             }
