@@ -14,7 +14,7 @@ class Pdf {
     }
 
 
-    public function mergePdf($files=[]): array
+    public function mergePdf($files=[], $nameOfMergedFile): array
     {
         $fileNames = [];
         foreach($files as $file) {
@@ -26,7 +26,7 @@ class Pdf {
         }
 
         $oMerger->merge();
-        $filename = 'MERGED_'.\Str::random(20).time().'.pdf';
+        $filename = $nameOfMergedFile;
         $path = storage_path('app/public/'.$filename);
         $oMerger->save($path);
         return [
@@ -48,11 +48,11 @@ class Pdf {
         }
     }
 
-    public static function mergeFromURL($files=[],$mediaTypeId=16): string
+    public static function mergeFromURL($files=[],$fileName,$mediaTypeId=16): string
     {
         $pdf = new self($files);
-        $arr = $pdf->mergePdf($files);
-        $result = $pdf->sentToMedia($arr['filename'],config('procurex.access_token'),$mediaTypeId);
+        $arr = $pdf->mergePdf($files,$fileName);
+        $result = $pdf->sentToMedia($fileName,config('procurex.access_token'),$mediaTypeId);
         return $result['data']['url'];
     }
 
