@@ -2,10 +2,11 @@
 namespace Alterindonesia\Procurex\Facades;
 
 use GuzzleHttp\Client;
+use Webklex\PDFMerger\Facades\PDFMergerFacade as PDFMerger;
 
 class Pdf {
 
-    private $files = [];
+    private array $files;
     public function __construct(
         $files
     ){
@@ -13,15 +14,25 @@ class Pdf {
     }
 
 
-    public function mergePdf($files=[]) {
+    public function mergePdf($files=[]): string
+    {
         $fileNames = [];
         foreach($files as $file) {
             $fileNames[] = $this->downloadFile($file);
         }
-        dd($fileNames);
+        $oMerger = PDFMerger::init();
+        foreach ($fileNames as $fileName){
+            $oMerger->addPDF(storage_path('app/temp/'.$fileName), 'all');
+        }
+
+        $oMerger->merge();
+        $path = storage_path('app/public/MERGED_'.\Str::random(20).time().'.pdf');
+        $oMerger->save($path);
+        return $path;
     }
 
-    private function downloadFile($url) {
+    private function downloadFile($url): bool|string
+    {
        $client = new Client();
        try {
               $response = $client->get($url);
@@ -33,7 +44,8 @@ class Pdf {
        }
     }
 
-    public static function mergeFromURL($files=[]){
+    public static function mergeFromURL($files=[]): string
+    {
         $pdf = new self($files);
         return $pdf->mergePdf($files);
     }
