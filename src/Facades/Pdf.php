@@ -14,7 +14,7 @@ class Pdf {
     }
 
 
-    public function mergePdf($files=[]): string
+    public function mergePdf($files=[]): array
     {
         $fileNames = [];
         foreach($files as $file) {
@@ -26,27 +26,47 @@ class Pdf {
         }
 
         $oMerger->merge();
-        $path = storage_path('app/public/MERGED_'.\Str::random(20).time().'.pdf');
+        $filename = 'MERGED_'.\Str::random(20).time().'.pdf';
+        $path = storage_path('app/public/'.$filename);
         $oMerger->save($path);
-        return $path;
+        return [
+            'filename' => $filename,
+            'path' => $path
+        ];
     }
 
     private function downloadFile($url): bool|string
     {
-       $client = new Client();
-       try {
-              $response = $client->get($url);
-              $filename = \Str::random(20).time().'.pdf';
-              \Storage::disk('local')->put('temp/'.$filename, $response->getBody());
-              return $filename;
-         } catch (\Exception $e) {
-              return false;
-       }
+        $client = new Client();
+        try {
+            $response = $client->get($url);
+            $filename = \Str::random(20).time().'.pdf';
+            \Storage::disk('local')->put('temp/'.$filename, $response->getBody());
+            return $filename;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
-    public static function mergeFromURL($files=[]): string
+    public static function mergeFromURL($files=[],$mediaTypeId=16): string
     {
         $pdf = new self($files);
-        return $pdf->mergePdf($files);
+        $arr = $pdf->mergePdf($files);
+        $result = $pdf->sentToMedia($arr['filename'],config('procurex.access_token'),$mediaTypeId);
+        return $result['data']['url'];
+    }
+
+    private function sentToMedia($filename,$accessToken=null,$mediaTypeId=16) {
+        $http = \Http::withHeaders([
+            'Authorization' => 'Bearer '.$accessToken,
+            'Accept' => 'application/json'
+        ])->attach('file', file_get_contents(storage_path('app/public/'.$filename)), $filename)
+            ->post(config('procurex.service_base_url').'/api/media/media',
+                [
+                    'media_type_id' => $mediaTypeId,
+                    'disk'  => 'gcs'
+                ]);
+        $response = $http->json();
+        return $response;
     }
 }
