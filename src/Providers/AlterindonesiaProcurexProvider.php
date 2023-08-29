@@ -16,7 +16,8 @@ class AlterindonesiaProcurexProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->register('Webklex\PDFMerger\PDFMergerServiceProvider::class');
+        $this->app->alias('PDFMerger', '\Webklex\PDFMerger\Facades\PDFMergerFacade::class');
     }
 
     /**

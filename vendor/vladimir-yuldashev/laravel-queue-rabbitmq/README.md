@@ -509,6 +509,26 @@ If for some reason you don't want the connection lazy you can turn it off by set
 ],
 ```
 
+### Network Protocol
+
+By default, the network protocol used for connection is tcp.
+If for some reason you want to use another network protocol, you can add the extra value in your config options.
+Available protocols : `tcp`, `ssl`, `tls`
+
+```php
+'connections' => [
+    // ...
+
+    'rabbitmq' => [
+        // ...
+
+        'network_protocol' => 'tcp',
+    ],
+
+    // ...    
+],
+```
+
 ### Octane support
 
 Starting with 13.3.0, this package supports [Laravel Octane](https://laravel.com/docs/octane) out of the box.
@@ -533,10 +553,9 @@ $app->register(VladimirYuldashev\LaravelQueueRabbitMQ\LaravelQueueRabbitMQServic
 
 There are two ways of consuming messages.
 
-1. `queue:work` command which is Laravel's built-in command. This command utilizes `basic_get`.
+1. `queue:work` command which is Laravel's built-in command. This command utilizes `basic_get`. Use this if you want to consume multiple queues.
 
-2. `rabbitmq:consume` command which is provided by this package. This command utilizes `basic_consume` and is more
-   performant than `basic_get` by ~2x.
+2. `rabbitmq:consume` command which is provided by this package. This command utilizes `basic_consume` and is more performant than `basic_get` by ~2x, but does not support multiple queues.
 
 ## Testing
 
