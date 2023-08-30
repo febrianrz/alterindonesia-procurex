@@ -14,7 +14,7 @@ class Pdf {
     }
 
 
-    public function mergePdf($files=[], $nameOfMergedFile): array
+    public function mergePdf($files=[], $nameOfMergedFile=""): array
     {
         $fileNames = [];
         foreach($files as $file) {
@@ -48,7 +48,7 @@ class Pdf {
         }
     }
 
-    public static function mergeFromURL($files=[],$fileName,$mediaTypeId=16): string
+    public static function mergeFromURL($files=[],$fileName="",$mediaTypeId=16): string
     {
         $pdf = new self($files);
         $arr = $pdf->mergePdf($files,$fileName);
