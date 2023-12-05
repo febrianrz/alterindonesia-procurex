@@ -84,14 +84,19 @@ class RestServiceEloquent implements RestServiceInterface
      */
     public function list(Request $request): array
     {
+        $filters = $this->overrideAllowedFilters() ?? [
+            AllowedFilter::custom('created_at', new FilterDate()),
+            AllowedFilter::custom('updated_at', new FilterDate()),
+            AllowedFilter::trashed(),
+            ...$this->model->getFillable(),
+            ...$this->defaultAllowedFilter,
+        ];
+
         $this->result["data"] = QueryBuilder::for($this->model)
             ->allowedFields('id', ...$this->model->getFillable())
-            ->allowedFilters($this->overrideAllowedFilters() ?? [
-                AllowedFilter::custom('created_at', new FilterDate()),
-                AllowedFilter::custom('updated_at', new FilterDate()),
-                AllowedFilter::trashed(),
-                ...$this->model->getFillable(),
-                ...$this->defaultAllowedFilter,
+            ->allowedFilters([
+                ...$filters,
+                AllowedFilter::callback('action', static fn ($query, $value) => $query),
             ])
             ->defaultSort($this->model->getKeyName())
             ->allowedSorts(
