@@ -12,9 +12,9 @@ class AlterindonesiaProcurexController extends BaseController
 {
     /**
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse|\App\Http\Resources\AnonymousCollection
+     * @return \Illuminate\Http\JsonResponse|\Alterindonesia\Procurex\Resources\AnonymousCollection
      */
-    public function getRouteList(Request $request): \Illuminate\Http\JsonResponse|\App\Http\Resources\AnonymousCollection
+    public function getRouteList(Request $request): \Illuminate\Http\JsonResponse|\Alterindonesia\Procurex\Resources\AnonymousCollection
     {
         $roleCode = $request->input('role_code') ?? '';
         $routeCollection = Route::getRoutes();
@@ -39,7 +39,7 @@ class AlterindonesiaProcurexController extends BaseController
 
     /**
      * @param Request $request
-     * @return \App\Http\Resources\AnonymousCollection|\Illuminate\Http\JsonResponse
+     * @return \Alterindonesia\Procurex\Resources\AnonymousCollection|\Illuminate\Http\JsonResponse
      */
     public function assignRoleRoute(Request $request) {
         $request->validate([

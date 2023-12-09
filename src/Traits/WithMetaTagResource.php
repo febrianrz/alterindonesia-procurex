@@ -2,9 +2,6 @@
 
 namespace Alterindonesia\Procurex\Traits;
 
-use App\Libraries\Auth;
-use Illuminate\Support\Facades\Route;
-
 trait WithMetaTagResource
 {
     protected int $code = 200;
