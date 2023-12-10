@@ -21,6 +21,9 @@
         "spatie/laravel-query-builder": "^5.1",
         "vladimir-yuldashev/laravel-queue-rabbitmq": "^13.3"
     },
+    "require-dev": {
+        "orchestra/testbench": "^8.17"
+    },
     "extra": {
         "laravel": {
             "providers": [
