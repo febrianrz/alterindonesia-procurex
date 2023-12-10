@@ -4,7 +4,8 @@
     "license": "proprietary",
     "autoload": {
         "psr-4": {
-            "Alterindonesia\\Procurex\\": "src/"
+            "Alterindonesia\\Procurex\\": "src/",
+            "Alterindonesia\\Procurex\\Tests\\": "tests/"
         }
     },
     "authors": [
