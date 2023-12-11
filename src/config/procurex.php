@@ -23,5 +23,7 @@ return [
         'vhost'       => env('RABBITMQ_VHOST', '/'),
         'exchange'    => env('RABBITMQ_EXCHANGE', 'task-service'),
         'routing_key' => env('RABBITMQ_ROUTING_KEY', 'task-service'),
-    ]
+    ],
+
+    'media_service_base_url' => env('MEDIA_SERVICE_BASE_URL', 'https://procurex-be.alterindonesia.com/api/media'),
 ];

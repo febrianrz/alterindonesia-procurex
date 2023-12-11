@@ -3,7 +3,10 @@
 namespace Alterindonesia\Procurex\Providers;
 
 use Alterindonesia\Procurex\Console\CreateTaskNotifikasiCommand;
+use Alterindonesia\Procurex\Factories\WordTemplateFactory;
 use Alterindonesia\Procurex\Middleware\AuthJWTMiddleware;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Http\Client\Factory as HttpFactory;
 use Illuminate\Support\ServiceProvider;
 
 class AlterindonesiaProcurexProvider extends ServiceProvider
@@ -15,7 +18,9 @@ class AlterindonesiaProcurexProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->mergeConfigFrom(__DIR__.'/../config/procurex.php', 'procurex');
+
+        $this->registerWordTemplateService();
     }
 
     /**
@@ -39,5 +44,19 @@ class AlterindonesiaProcurexProvider extends ServiceProvider
 //                CreateTaskNotifikasiCommand::class
 //            ]);
 //        }
+    }
+
+    private function registerWordTemplateService(): void
+    {
+        $this->app->singleton(WordTemplateFactory::class, function ($app) {
+            $config = $app->make('config');
+
+            return new WordTemplateFactory(
+                $app[HttpFactory::class],
+                $app->make(Filesystem::class),
+                $config->get('procurex.media_service_base_url'),
+                $config->get('procurex.access_token'),
+            );
+        });
     }
 }
