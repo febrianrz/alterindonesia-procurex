@@ -25,5 +25,11 @@ return [
         'routing_key' => env('RABBITMQ_ROUTING_KEY', 'task-service'),
     ],
 
-    'media_service_base_url' => env('MEDIA_SERVICE_BASE_URL', 'https://procurex-be.alterindonesia.com/api/media'),
+    'media_service_base_url' => env(
+        'PROCUREX_MEDIA_SERVICE_BASE_URL',
+        'https://procurex-be.alterindonesia.com/api/media',
+    ),
+
+    // Generate di SSO service dengan menjalankan: php artisan procurex:create-service-token {id service}
+    'access_token' => env('PROCUREX_ACCESS_TOKEN_SECRET', ''),
 ];
