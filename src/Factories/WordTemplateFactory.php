@@ -2,8 +2,9 @@
 
 namespace Alterindonesia\Procurex\Factories;
 
+use Alterindonesia\Procurex\Exceptions\WordTemplateFactory\WordTemplateCodeNotSetException;
 use Alterindonesia\Procurex\WordTemplateLinkData;
-use Illuminate\Filesystem\Filesystem;
+use illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\PendingRequest;
 
@@ -14,6 +15,8 @@ class WordTemplateFactory
 {
     protected array $options = [];
 
+    protected string $code;
+
     public function __construct(
         protected Factory $factory,
         protected Filesystem $filesystem,
@@ -22,11 +25,45 @@ class WordTemplateFactory
     ) {
     }
 
-    public function saveAs(string $templateUuid, string $path): void
+    public function ofCode(string $code): static
     {
-        $this->newPendingRequest()->sink($path)->post("/word-templates/$templateUuid/generate", $this->options);
+        $this->code = $code;
+
+        return $this;
+    }
+
+    /**
+     * @throws WordTemplateCodeNotSetException
+     */
+    public function saveAs(string $path): void
+    {
+        if (!isset($this->code)) {
+            throw new WordTemplateCodeNotSetException();
+        }
+
+        $this->newPendingRequest()->sink($path)->post("/word-templates/$this->code/generate", $this->options);
 
         $this->options = [];
+    }
+
+    /**
+     * @throws WordTemplateCodeNotSetException
+     */
+    public function saveAsMedia(int $mediaTypeId, ?string $disk = null): ?array
+    {
+        if (!isset($this->code)) {
+            throw new WordTemplateCodeNotSetException();
+        }
+
+        $response = $this->newPendingRequest()->post("/word-templates/$this->code/generate-as-media", [
+            'media_type_id' => $mediaTypeId,
+            'disk' => $disk ?? 'gcs',
+            ...$this->options
+        ]);
+
+        $this->options = [];
+
+        return $response->json('data');
     }
 
     public function toDocx(): static

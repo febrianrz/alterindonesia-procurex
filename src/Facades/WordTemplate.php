@@ -6,20 +6,20 @@ use Alterindonesia\Procurex\Factories\WordTemplateFactory;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see WordTemplateFactory::toPdf
- * @method static WordTemplateFactory toPdf()
- *
- * @see WordTemplateFactory::replaceImageVariable
- * @method static WordTemplateFactory replaceImageVariable(array $variables, array|null $options = null)
+ * @see WordTemplateFactory::ofCode()
+ * @method static WordTemplateFactory ofCode(string $code)
  *
  * @see WordTemplateFactory::saveAs
- * @method static void saveAs(string $templateUuid, string $path)
+ * @method static void saveAs(string $path)
  *
- * @see WordTemplateFactory::replaceLinkVariable
- * @method static WordTemplateFactory replaceLinkVariable(array $variables, array|null $options = null)
+ * @see WordTemplateFactory::saveAsMedia
+ * @method static void saveAsMedia(int $mediaTypeId, string|null $disk = null)
  *
  * @see WordTemplateFactory::toDocx
  * @method static WordTemplateFactory toDocx()
+ *
+ * @see WordTemplateFactory::toPdf
+ * @method static WordTemplateFactory toPdf()
  *
  * @see WordTemplateFactory::replaceVariableByText
  * @method static WordTemplateFactory replaceVariableByText(array $variables, array|null $options = null)
@@ -29,6 +29,12 @@ use Illuminate\Support\Facades\Facade;
  *
  * @see WordTemplateFactory::replaceListVariable
  * @method static WordTemplateFactory replaceListVariable(array $variables, array|null $options = null)
+ *
+ * @see WordTemplateFactory::replaceImageVariable
+ * @method static WordTemplateFactory replaceImageVariable(array $variables, array|null $options = null)
+ *
+ * @see WordTemplateFactory::replaceLinkVariable
+ * @method static WordTemplateFactory replaceLinkVariable(array $variables, array|null $options = null)
  */
 class WordTemplate extends Facade
 {
@@ -48,10 +54,5 @@ class WordTemplate extends Facade
         return tap(static::getFacadeRoot(), function ($fake) use ($callback) {
             static::swap($fake->fake($callback));
         });
-    }
-
-    public static function getOptions(): array
-    {
-        return static::getFacadeRoot()->getOptions();
     }
 }

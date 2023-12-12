@@ -2,6 +2,7 @@
 
 namespace Alterindonesia\Procurex\Tests\Facades;
 
+use Alterindonesia\Procurex\Exceptions\WordTemplateFactory\WordTemplateCodeNotSetException;
 use Alterindonesia\Procurex\Facades\WordTemplate;
 use Alterindonesia\Procurex\Tests\TestCase;
 use Alterindonesia\Procurex\WordTemplateLinkData;
@@ -10,25 +11,26 @@ use Illuminate\Support\Facades\Http;
 
 class WordTemplateTest extends TestCase
 {
-
-    /** @test */
-    public function it_saves_as_successfully_and_does_not_throw_exception(): void
+    /** @test
+     * @throws WordTemplateCodeNotSetException
+     */
+    public function it_can_save_generated_word_from_word_template(): void
     {
         // Arrange
         $baseUrl = config('procurex.media_service_base_url');
 
-        $templateUuid = '9ac27f9f-69ca-4074-8346-e18394e2aa1a';
+        $templateCode = 'EXAMPLE';
         $path = '/tmp/procurex-word-template.docx';
         $expectedFilePath = __DIR__.DIRECTORY_SEPARATOR.'../fixtures/word-templates/generate-2-20231210-153010.docx';
 
         WordTemplate::fake([
-            "$baseUrl/word-templates/$templateUuid/generate" => Http::response(file_get_contents($expectedFilePath))
+            "$baseUrl/word-templates/$templateCode/generate" => Http::response(file_get_contents($expectedFilePath))
         ]);
 
         // Act
         $options = WordTemplate::getOptions();
 
-        WordTemplate::saveAs($templateUuid, $path);
+        WordTemplate::ofCode($templateCode)->saveAs($path);
 
         // Assert
         $this->assertEquals([], $options);
@@ -36,6 +38,59 @@ class WordTemplateTest extends TestCase
         $this->assertFileEquals($expectedFilePath, $path);
 
         File::delete($path);
+    }
+
+    /** @test
+     * @throws WordTemplateCodeNotSetException
+     */
+    public function it_can_save_as_media_generated_word_from_word_template(): void
+    {
+        // Arrange
+        $baseUrl = config('procurex.media_service_base_url');
+
+        $templateCode = 'EXAMPLE';
+        $expectedMedia = [
+            'id' => 6,
+            'url' => 'http://media.procurex.test/storage/mr_sr_editor/procurex-word-template.docx',
+            'mime' => 'image/jpeg',
+            'size_in_bytes' => 102117,
+            'created_at' => '2023-02-17T16:54:39.000000Z',
+            'updated_at' => '2023-02-17T16:54:39.000000Z',
+            'type' => [
+                'id' => 1,
+                'name' => 'TEST',
+                'mimes' => ['dox', 'pdf'],
+                'created_at' => '2023-02-17T16:49:42.000000Z',
+                'updated_at' => '2023-02-17T16:49:42.000000Z',
+                'actions' => [
+                    'edit' => 'http://media.procurex.test/api/media-type/1',
+                    'delete' => 'http://media.procurex.test/api/media-type/1',
+                ],
+            ],
+            'actions' => [
+                'edit' => 'http://media.procurex.test/api/media/6',
+                'delete' => 'http://media.procurex.test/api/media/6',
+            ],
+        ];
+
+        WordTemplate::fake([
+            "$baseUrl/word-templates/$templateCode/generate-as-media" => Http::response([
+                'meta'=> [
+                    'message'=> 'Successfully create data.',
+                    'code'=> 201,
+                ],
+                'data'=> $expectedMedia,
+            ])
+        ]);
+
+        // Act
+        $options = WordTemplate::getOptions();
+
+        $result = WordTemplate::ofCode($templateCode)->saveAsMedia(mediaTypeId: 1);
+
+        // Assert
+        $this->assertEquals([], $options);
+        $this->assertEquals($expectedMedia, $result);
     }
 
 
