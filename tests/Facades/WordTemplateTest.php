@@ -3,6 +3,7 @@
 namespace Alterindonesia\Procurex\Tests\Facades;
 
 use Alterindonesia\Procurex\Exceptions\WordTemplateFactory\WordTemplateCodeNotSetException;
+use Alterindonesia\Procurex\Exceptions\WordTemplateFactory\WordTemplateNotFoundException;
 use Alterindonesia\Procurex\Facades\WordTemplate;
 use Alterindonesia\Procurex\Tests\TestCase;
 use Alterindonesia\Procurex\WordTemplateLinkData;
@@ -40,7 +41,49 @@ class WordTemplateTest extends TestCase
         File::delete($path);
     }
 
-    /** @test
+    /**
+     * @test
+     * @covers \Alterindonesia\Procurex\Factories\WordTemplateFactory::saveAs()
+     */
+    public function it_throw_exception_if_template_code_not_set_when_save_as(): void
+    {
+        // Arrange
+        $this->expectException(WordTemplateCodeNotSetException::class);
+
+        // Act
+        WordTemplate::saveAs('/tmp/test.docx');
+    }
+
+    /**
+     * @test
+     * @covers \Alterindonesia\Procurex\Factories\WordTemplateFactory::saveAs()
+     */
+    public function it_throw_exception_if_template_code_not_exist_when_save_as(): void
+    {
+        // Arrange
+        $this->expectException(WordTemplateNotFoundException::class);
+
+        $baseUrl = config('procurex.media_service_base_url');
+        $templateCode = 'NOT_FOUND';
+
+        WordTemplate::fake([
+            "$baseUrl/word-templates/$templateCode/generate" => Http::response([
+                'meta'=> [
+                    'message'=> 'Data not found.',
+                    'code'=> 404,
+                    'number'=> '',
+                    'action'=> '',
+                ],
+                'data'=> [],
+            ], 404)
+        ]);
+
+        // Act
+        WordTemplate::ofCode($templateCode)->saveAs('/tmp/test.docx');
+    }
+
+    /**
+     * @test
      * @throws WordTemplateCodeNotSetException
      */
     public function it_can_save_as_media_generated_word_from_word_template(): void
@@ -93,6 +136,46 @@ class WordTemplateTest extends TestCase
         $this->assertEquals($expectedMedia, $result);
     }
 
+    /**
+     * @test
+     * @covers \Alterindonesia\Procurex\Factories\WordTemplateFactory::saveAsMedia()
+     */
+    public function it_throw_exception_if_template_code_not_set_when_save_as_media(): void
+    {
+        // Arrange
+        $this->expectException(WordTemplateCodeNotSetException::class);
+
+        // Act
+        WordTemplate::saveAsMedia(mediaTypeId: 1);
+    }
+
+    /**
+     * @test
+     * @covers \Alterindonesia\Procurex\Factories\WordTemplateFactory::saveAsMedia()
+     */
+    public function it_throw_exception_if_template_code_not_exist_when_save_as_media(): void
+    {
+        // Arrange
+        $this->expectException(WordTemplateNotFoundException::class);
+
+        $baseUrl = config('procurex.media_service_base_url');
+        $templateCode = 'NOT_FOUND';
+
+        WordTemplate::fake([
+            "$baseUrl/word-templates/$templateCode/generate-as-media" => Http::response([
+                'meta'=> [
+                    'message'=> 'Data not found.',
+                    'code'=> 404,
+                    'number'=> '',
+                    'action'=> '',
+                ],
+                'data'=> [],
+            ], 404)
+        ]);
+
+        // Act
+        WordTemplate::ofCode($templateCode)->saveAsMedia(mediaTypeId: 1);
+    }
 
     /** @test */
     public function it_can_set_options_to_pdf(): void

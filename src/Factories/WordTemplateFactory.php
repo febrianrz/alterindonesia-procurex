@@ -3,6 +3,8 @@
 namespace Alterindonesia\Procurex\Factories;
 
 use Alterindonesia\Procurex\Exceptions\WordTemplateFactory\WordTemplateCodeNotSetException;
+use Alterindonesia\Procurex\Exceptions\WordTemplateFactory\WordTemplateException;
+use Alterindonesia\Procurex\Exceptions\WordTemplateFactory\WordTemplateNotFoundException;
 use Alterindonesia\Procurex\WordTemplateLinkData;
 use illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Client\Factory;
@@ -34,6 +36,8 @@ class WordTemplateFactory
 
     /**
      * @throws WordTemplateCodeNotSetException
+     * @throws WordTemplateNotFoundException
+     * @throws WordTemplateException
      */
     public function saveAs(string $path): void
     {
@@ -41,13 +45,22 @@ class WordTemplateFactory
             throw new WordTemplateCodeNotSetException();
         }
 
-        $this->newPendingRequest()->sink($path)->post("/word-templates/$this->code/generate", $this->options);
+        $response = $this->newPendingRequest()->sink($path)->post("/word-templates/$this->code/generate", $this->options);
 
         $this->options = [];
+
+        match (true) {
+            $response->notFound() => throw new WordTemplateNotFoundException(),
+            $response->failed() => throw new WordTemplateException(
+                $response->json('meta.message') ?? $response->json('message') ?? $response->body()
+            ),
+            default => null,
+        };
     }
 
     /**
      * @throws WordTemplateCodeNotSetException
+     * @throws WordTemplateException
      */
     public function saveAsMedia(int $mediaTypeId, ?string $disk = null): ?array
     {
@@ -63,7 +76,13 @@ class WordTemplateFactory
 
         $this->options = [];
 
-        return $response->json('data');
+        return match (true) {
+            $response->successful() => $response->json('data'),
+            $response->notFound() => throw new WordTemplateNotFoundException(),
+            default => throw new WordTemplateException(
+                $response->json('meta.message') ?? $response->json('message') ?? $response->body()
+            )
+        };
     }
 
     public function toDocx(): static
@@ -222,6 +241,7 @@ class WordTemplateFactory
             ->baseUrl($this->baseUrl)
             ->withToken($this->accessToken)
             ->asJson()
+            ->acceptJson()
             ->timeout(60);
 
         return $pendingRequest;

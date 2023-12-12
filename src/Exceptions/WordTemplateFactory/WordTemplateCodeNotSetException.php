@@ -4,7 +4,7 @@ namespace Alterindonesia\Procurex\Exceptions\WordTemplateFactory;
 
 use Exception;
 
-class WordTemplateCodeNotSetException extends Exception
+class WordTemplateCodeNotSetException extends WordTemplateException
 {
     public function __construct()
     {
