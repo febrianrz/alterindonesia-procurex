@@ -85,6 +85,54 @@ class WordTemplateFactory
         return $response->json('data');
     }
 
+    /**
+     * @reference https://github.com/laravel/framework/blob/265e932e81fff663164444e4c8c950af90fb79ad/src/Illuminate/Routing/ResponseFactory.php#L141
+     *
+     * @throws WordTemplateAccessTokenException
+     * @throws WordTemplateCodeNotSetException
+     * @throws WordTemplateException
+     * @throws WordTemplateNotFoundException
+     */
+    public function toStreamedResponse(string $name = null, array $headers = [], string $disposition = 'inline'): StreamedResponse
+    {
+        if (!isset($this->code)) {
+            throw new WordTemplateCodeNotSetException();
+        }
+
+        $response = $this->newPendingRequest()->post("/word-templates/$this->code/generate", $this->options);
+
+        $this->options = [];
+
+        $this->validateResponse($response);
+
+        $withWrappedException = function () use ($response) {
+            try {
+                $body = $response->toPsrResponse()->getBody();
+
+                while (!$body->eof()) {
+                    echo $body->read(1024);
+                }
+            } catch (Throwable $e) {
+                throw new StreamedResponseException($e);
+            }
+        };
+
+        $streamedResponse = new StreamedResponse($withWrappedException, 200, $headers);
+
+        $streamedResponse->headers->set('Content-Type', $response->header('Content-Type'));
+        $streamedResponse->headers->set('Content-Length', $response->header('Content-Length'));
+
+        if (! is_null($name)) {
+            $streamedResponse->headers->set('Content-Disposition', $streamedResponse->headers->makeDisposition(
+                $disposition,
+                $name,
+                str_replace('%', '', Str::ascii($name))
+            ));
+        }
+
+        return $streamedResponse;
+    }
+
     public function toDocx(): static
     {
         unset($this->options['format']);
@@ -262,5 +310,18 @@ class WordTemplateFactory
             ),
             default => null,
         };
+    }
+
+    /**
+     * Convert the string to ASCII characters that are equivalent to the given name.
+     *
+     * @reference https://github.com/laravel/framework/blob/265e932e81fff663164444e4c8c950af90fb79ad/src/Illuminate/Routing/ResponseFactory.php#L190
+     *
+     * @param  string  $name
+     * @return string
+     */
+    protected function fallbackName($name)
+    {
+        return str_replace('%', '', Str::ascii($name));
     }
 }
