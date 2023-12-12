@@ -2,13 +2,20 @@
 
 namespace Alterindonesia\Procurex\Factories;
 
+use Alterindonesia\Procurex\Exceptions\WordTemplateFactory\WordTemplateAccessTokenException;
 use Alterindonesia\Procurex\Exceptions\WordTemplateFactory\WordTemplateCodeNotSetException;
 use Alterindonesia\Procurex\Exceptions\WordTemplateFactory\WordTemplateException;
 use Alterindonesia\Procurex\Exceptions\WordTemplateFactory\WordTemplateNotFoundException;
 use Alterindonesia\Procurex\WordTemplateLinkData;
+use GuzzleHttp\Promise\PromiseInterface;
 use illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\Response;
+use Illuminate\Routing\Exceptions\StreamedResponseException;
+use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Throwable;
 
 /**
  * Class WordTemplateFactory
@@ -35,9 +42,10 @@ class WordTemplateFactory
     }
 
     /**
+     * @throws WordTemplateAccessTokenException
      * @throws WordTemplateCodeNotSetException
-     * @throws WordTemplateNotFoundException
      * @throws WordTemplateException
+     * @throws WordTemplateNotFoundException
      */
     public function saveAs(string $path): void
     {
@@ -49,18 +57,14 @@ class WordTemplateFactory
 
         $this->options = [];
 
-        match (true) {
-            $response->notFound() => throw new WordTemplateNotFoundException(),
-            $response->failed() => throw new WordTemplateException(
-                $response->json('meta.message') ?? $response->json('message') ?? $response->body()
-            ),
-            default => null,
-        };
+        $this->validateResponse($response);
     }
 
     /**
+     * @throws WordTemplateAccessTokenException
      * @throws WordTemplateCodeNotSetException
      * @throws WordTemplateException
+     * @throws WordTemplateNotFoundException
      */
     public function saveAsMedia(int $mediaTypeId, ?string $disk = null): ?array
     {
@@ -76,13 +80,9 @@ class WordTemplateFactory
 
         $this->options = [];
 
-        return match (true) {
-            $response->successful() => $response->json('data'),
-            $response->notFound() => throw new WordTemplateNotFoundException(),
-            default => throw new WordTemplateException(
-                $response->json('meta.message') ?? $response->json('message') ?? $response->body()
-            )
-        };
+        $this->validateResponse($response);
+
+        return $response->json('data');
     }
 
     public function toDocx(): static
@@ -245,5 +245,22 @@ class WordTemplateFactory
             ->timeout(60);
 
         return $pendingRequest;
+    }
+
+    /**
+     * @throws WordTemplateException
+     * @throws WordTemplateAccessTokenException
+     * @throws WordTemplateNotFoundException
+     */
+    protected function validateResponse(PromiseInterface|Response $response): void
+    {
+        match (true) {
+            $response->unauthorized() => throw new WordTemplateAccessTokenException(),
+            $response->notFound() => throw new WordTemplateNotFoundException(),
+            $response->failed() => throw new WordTemplateException(
+                $response->json('meta.message') ?? $response->json('message') ?? $response->body()
+            ),
+            default => null,
+        };
     }
 }
