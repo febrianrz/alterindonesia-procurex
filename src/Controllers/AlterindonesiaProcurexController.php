@@ -50,7 +50,6 @@ class AlterindonesiaProcurexController extends BaseController
         ]);
 
         try {
-            DB::beginTransaction();
             if (boolval($request->input('state')) === true) {
                 $exists = DB::table('role_permission_procurex')
                     ->where('role_code', $request->input('role_code'))
@@ -81,10 +80,8 @@ class AlterindonesiaProcurexController extends BaseController
                 if ($http->status() !== 200) throw new \Exception("Gagal meneruskan ke service {$request->url}");
             }
 
-            DB::commit();
             return GlobalHelper::responseSuccess("Success", []);
         } catch (\Exception $e){
-            DB::rollBack();
             return GlobalHelper::responseError($e->getMessage());
         }
     }
