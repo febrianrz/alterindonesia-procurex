@@ -282,6 +282,25 @@ class WordTemplateTest extends TestCase
         $this->assertEquals($expectedOptions, WordTemplate::getOptions());
     }
 
+    /** @test  */
+    public function it_can_set_qr_codes_options(): void
+    {
+        // Act
+        $variables = ['HEADERIMG' => 'qr_code_text_1'];
+        $options = ['height' => 3, 'width' => 3, 'target' => 'header'];
+
+        WordTemplate::replaceImageVariableWithQrCode($variables, $options);
+
+        // Assert
+        $expectedOptions = [
+            'qr_codes' => [
+                ['data' => $variables, 'options' => $options],
+            ]
+        ];
+
+        $this->assertEquals($expectedOptions, WordTemplate::getOptions());
+    }
+
     /** @test */
     public function it_can_set_links_options(): void
     {

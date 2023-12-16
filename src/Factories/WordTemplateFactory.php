@@ -238,6 +238,31 @@ class WordTemplateFactory
     }
 
     /**
+     * @param  array  $variables
+     *   keys: this variable uniquely identifies the image we want to replace
+     *   values: the text of QR Code
+     * @param  array|null  $options
+     * 'firstMatch' (bool) if true it only replaces the first variable match. Default is set to false.
+     * 'target' (string) document, header, footer, footnote, endnote, comment
+     * 'width' (mixed) the value in cm (float) or 'auto' (use image size), 0 to not change the previous size
+     * 'height' (mixed) the value in cm (float) or 'auto' (use image size), 0 to not change the previous size
+     * 'dpi' (int) dots per inch. This parameter is only taken into account if width or height are set to auto.
+     * 'mime' (string) forces a mime (image/jpg, image/jpeg, image/png, image/gif)
+     * 'replaceShapes' (bool): default as false. If true, replace images in shapes too
+     * 'resourceMode' (bool) if true, uses src as image resource. The image resource is transformed to PNG automatically. Default as false
+     * 'streamMode' (bool) if true, uses src path as stream. PHP 5.4 or greater needed to autodetect the mime type; otherwise set it using mime option. Default as false
+     * If any of these formatting parameters is not set, the width and/or height of the placeholder image will be preserved
+     */
+    public function replaceImageVariableWithQrCode(array $variables, ?array $options = null): static
+    {
+        $this->options['qr_codes'][] = $options
+            ? ['data' => $variables, 'options' => $options]
+            : ['data' => $variables];
+
+        return $this;
+    }
+
+    /**
      * Replaces an array of variables by links
      *
      * @param  array<string, WordTemplateLinkData>  $variables
