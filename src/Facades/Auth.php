@@ -24,6 +24,9 @@ class Auth extends \Illuminate\Support\Facades\Auth {
     public ?object $employee = null;
     public ?array $roles = [];
     public ?object $company = null;
+    public ?object $vendor = null;
+    public ?object $buyer = null;
+    public ?object $planner = null;
 
     public function __construct($user) {
         $this->id = $user->id;
@@ -35,6 +38,9 @@ class Auth extends \Illuminate\Support\Facades\Auth {
         $this->roles = $user->roles;
         $this->company = $user->company;
         $this->employee = $user->employee;
+        $this->vendor = data_get($user, 'vendor');
+        $this->buyer = data_get($user, 'buyer');
+        $this->planner = data_get($user, 'planner');
     }
 
     public static function check(): bool
