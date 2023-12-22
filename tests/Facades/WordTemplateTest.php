@@ -332,4 +332,32 @@ class WordTemplateTest extends TestCase
 
         $this->assertEquals($expectedOptions, WordTemplate::getOptions());
     }
+
+    /** @test */
+    public function it_can_set_html_options(): void
+    {
+        // Act
+        $html = <<<HTML
+            <table>
+            <tr><td>Item</td></tr>
+            </table>
+        HTML;
+        $type = 'inline';
+        $options = ['removeLineBreaks' => 'true'];
+
+        WordTemplate::replaceVariableByHTML('table', $type, $html, $options);
+
+        // Assert
+        $expectedOptions = [
+            'html' => [
+                'table' => [
+                    'data' => $html,
+                    'type' => $type,
+                    'options' => $options,
+                ],
+            ]
+        ];
+
+        $this->assertEquals($expectedOptions, WordTemplate::getOptions());
+    }
 }

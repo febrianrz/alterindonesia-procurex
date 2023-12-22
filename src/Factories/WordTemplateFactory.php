@@ -291,6 +291,46 @@ class WordTemplateFactory
         return $this;
     }
 
+    /**
+     * Replace a template variable with WordML obtained from HTML via the embedHTML method.
+     *
+     * @access public
+     * @param string $var Value of the variable.
+     * @param 'block'|'inline'|'inline-block' type inline, block (default) or inline-block (available only in Premium licenses, replaces the variable keeping block elements and the placeholder styles)
+     * @param string $html HTML source
+     * @param array $options:
+     * 'isFile' (bool),
+     * 'addDefaultStyles' (bool) true as default, if false prevents adding default styles when strictWordStyles is false
+     * 'baseURL' (string)
+     * 'cssEntityDecode' (bool) Default as false. If true, use html_entity_decode to parse CSS, useful when using font families with not standard names such as chinese, japanese, korean and others
+     * 'customListStyles' (bool) if true try to use the predefined custom lists
+     * 'downloadImages' (bool),
+     * 'embedFonts' (bool) default as false. If true download and embed TTF fonts from font-face styles
+     * 'filter' (string) could be an string denoting the id, class or tag to be filtered.
+     * If you want only a class introduce .classname, #idName for an id or <htmlTag> for a particular tag. One can also use
+     * standard XPath expresions supported by PHP.
+     * 'firstMatch' (bool) if true it only replaces the first variable match. Default is set to false
+     * 'forceNotTidy' (bool) False as default. If true, avoid using Tidy. Only recommended if Tidy can't be installed
+     * 'generateCustomListStyles' (bool) default as true. If true generates automatically the custom list styles from the list styles (decimal, lower-alpha, lower-latin, lower-roman, upper-alpha, upper-latin, upper-roman)
+     * 'parseAnchors' (bool),
+     * 'parseDivs' (paragraph, table): parses divs as paragraphs or tables,
+     * 'parseFloats' (bool),
+     * 'removeLineBreaks' (bool), if true removes line breaks that can be generated when transforming HTML,
+     * 'strictWordStyles' (bool) if true ignores all CSS styles and uses the styles set via the wordStyles option (see next)
+     * 'stylesReplacementType' (string) usePlaceholderStyles (keep placeholder styles, styles from the imported HTML are ignored), mixPlaceholderStyles (mix placeholder styles, placeholder styles overwrite HTML styles with the same name). Applies to the following styles: pPr, rPr
+     * 'stylesReplacementTypeIgnore' (array) styles to be ignored from the imported HTML. Use with mixPlaceholderStyles
+     * 'stylesReplacementTypeOverwrite' (bool) if true, overwrite the placeholder styles don't set in stylesReplacementTypeIgnore. Use with mixPlaceholderStyles. Default as false
+     * 'target': document, header, footer, footnote, endnote, comment
+     * 'useHTMLExtended' (bool)  if true uses HTML extended tags. Default as false
+     * 'wordStyles' (array) associates a particular class, id or HTML tag to a Word style
+     */
+    public function replaceVariableByHTML(string $var, string $type = 'block', string $html = '<html><body></body></html>', ?array $options = []): static
+    {
+        $this->options['html'][$var] = ['data' => $html, 'type' => $type, 'options' => $options];
+
+        return $this;
+    }
+
     public function getOptions(): array
     {
         return $this->options;

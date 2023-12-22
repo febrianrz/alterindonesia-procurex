@@ -35,6 +35,9 @@ use Illuminate\Support\Facades\Facade;
  *
  * @see WordTemplateFactory::replaceLinkVariable
  * @method static WordTemplateFactory replaceLinkVariable(array $variables, array|null $options = null)
+ *
+ * @see WordTemplateFactory::replaceVariableByHTML()
+ * @method static WordTemplateFactory replaceVariableByHTML(string $var, string $type = 'block', string $html = '<html><body></body></html>', ?array $options = [])
  */
 class WordTemplate extends Facade
 {
