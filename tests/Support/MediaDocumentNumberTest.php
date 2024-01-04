@@ -2,16 +2,16 @@
 
 namespace Alterindonesia\Procurex\Tests\Support;
 
-use Alterindonesia\Procurex\Support\MediaNumber;
+use Alterindonesia\Procurex\Support\MediaDocumentNumber;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
-class MediaNumberTest extends TestCase
+class MediaDocumentNumberTest extends TestCase
 {
     /** @test */
-    public function should_generate_a_media_number_with_all_required_parameters(): void
+    public function should_generate_a_media_number_with_all_parameters(): void
     {
-        $result = MediaNumber::generate(123, 'A000', 'TM', 'BA', 'PP', '2022', 'Asia/Jakarta');
+        $result = MediaDocumentNumber::format(123, 'A000', 'TM', 'BA', 'PP', '2022', '	Asia/Makassar');
 
         $expectedResult = "123/PR/A/TM/BA/PP/2022";
         $this->assertEquals($expectedResult, $result);
@@ -20,7 +20,7 @@ class MediaNumberTest extends TestCase
     /** @test */
     public function should_generate_a_media_number_with_given_number_and_company_code(): void
     {
-        $result = MediaNumber::generate(456, 'B000', 'TM', 'BA', 'PP', '2022', 'Asia/Jakarta');
+        $result = MediaDocumentNumber::format(456, 'B000', 'TM', 'BA', 'PP', '2022', 'Asia/Makassar');
 
         $expectedResult = "456/PR/B/TM/BA/PP/2022";
         $this->assertEquals($expectedResult, $result);
@@ -29,31 +29,28 @@ class MediaNumberTest extends TestCase
     /** @test */
     public function should_generate_a_media_number_with_given_number_company_module_category_subcategory(): void
     {
-        $result = MediaNumber::generate(789, 'C000', 'TM', 'BA', 'PP', '2022', 'Asia/Jakarta');
+        $result = MediaDocumentNumber::format(789, 'C000', 'TM', 'BA', 'PP', '2022');
 
         $expectedResult = "789/PR/C/TM/BA/PP/2022";
         $this->assertEquals($expectedResult, $result);
     }
 
     /** @test */
-    public function should_generate_a_media_number_with_null_year(): void
+    public function should_generate_a_media_number_without_year(): void
     {
-        $result = MediaNumber::generate(123, 'A000', 'TM', 'BA', 'PP', null, 'Asia/Jakarta');
+        $result = MediaDocumentNumber::format(123, 'A000', 'TM', 'BA', 'PP');
 
-        $expectedYear = date('Y');
+        $expectedYear = now('Asia/Jakarta')->format('Y');
         $expectedResult = "123/PR/A/TM/BA/PP/{$expectedYear}";
         $this->assertEquals($expectedResult, $result);
     }
 
     /** @test */
-    public function should_generate_a_media_number_with_null_timezone(): void
+    public function should_throw_exception_when_generate_a_media_number_with_empty_number(): void
     {
-        $tz = null;
+        $result = MediaDocumentNumber::format('', 'A000', 'TM', 'BA', 'PP', '2022', 'Asia/Jakarta');
 
-        $result = MediaNumber::generate(456, 'B000', 'TM', 'BA', 'PP', '2022', $tz);
-
-        $expectedResult = "456/PR/B/TM/BA/PP/2022";
-        $this->assertEquals($expectedResult, $result);
+        $this->assertEquals("/PR/A/TM/BA/PP/2022", $result);
     }
 
     /** @test */
@@ -61,6 +58,6 @@ class MediaNumberTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        MediaNumber::generate(789, '', 'TM', 'BA', 'PP', '2022', 'Asia/Jakarta');
+        MediaDocumentNumber::format(789, '', 'TM', 'BA', 'PP', '2022', 'Asia/Jakarta');
     }
 }
