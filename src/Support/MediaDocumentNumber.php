@@ -29,7 +29,7 @@ class MediaDocumentNumber
         $maxNumber = $query->where($column, 'like', "%$ending%")->max($column);
         $maxNumber = $maxNumber === null ? 0 : (int) substr($maxNumber, 0, -strlen($ending));
 
-        for ($i = 0; $i < $maxAttempts; $i++) {
+        for ($i = 1; $i <= $maxAttempts; $i++) {
             $number = ($maxNumber + $i).$ending;
 
             if ($query->where($column, $number)->doesntExist()) {
