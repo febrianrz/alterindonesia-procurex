@@ -2,8 +2,8 @@
 
 namespace Alterindonesia\Procurex\Support;
 
+use Illuminate\Contracts\Database\Query\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use RuntimeException;
@@ -11,10 +11,10 @@ use RuntimeException;
 class MediaDocumentNumber
 {
     /**
-     * @param  Builder|string|class-string<Model::class> $table
+     * @param  BuilderContract|string|class-string<Model::class> $table
      */
     public static function generate(
-        Builder|string $table,
+        BUilderContract|string $table,
         string $column,
         string $companyCode,
         string $moduleCode,
@@ -25,7 +25,7 @@ class MediaDocumentNumber
         int $maxAttempts = 1000,
     ): string {
         $ending = static::format('', $companyCode, $moduleCode, $categoryCode, $subCategoryCode, $year, $tz);
-        $query = $table instanceof Builder ? $table : DB::table(static::resolveTableName($table));
+        $query = $table instanceof BuilderContract ? $table : DB::table(static::resolveTableName($table));
         $maxNumber = $query->where($column, 'like', "%$ending%")->max($column);
         $maxNumber = $maxNumber === null ? 0 : (int) substr($maxNumber, 0, -strlen($ending));
 
