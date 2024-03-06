@@ -82,7 +82,11 @@ class AlterindonesiaRestController extends AlterindonesiaBaseController
         }
 
         // return success response
-        return $this->responseSuccess($result["message"], $result["data"], Response::HTTP_OK, $result["resource"]);
+        return $this->responseSuccess(
+            $result["message"],
+            new $result["resource"]($result["data"]),
+            Response::HTTP_OK
+        );
     }
 
     /**
