@@ -5,9 +5,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class Auth extends \Illuminate\Support\Facades\Auth {
@@ -27,6 +25,7 @@ class Auth extends \Illuminate\Support\Facades\Auth {
     public ?object $vendor = null;
     public ?object $buyer = null;
     public ?object $planner = null;
+    private ?array $permissions = null;
 
     public function __construct($user) {
         $this->id = $user->id;
@@ -120,14 +119,18 @@ class Auth extends \Illuminate\Support\Facades\Auth {
         return $this->id;
     }
 
-    public function can($permissionName): bool {
+    public function can($permissionName): bool
+    {
+        if (is_null($this->permissions)) {
+            $roleNames = $this->pluckRoleName();
+            $this->permissions = DB::table('role_permission_procurex')
+                ->whereIn('role_code',$roleNames)
+                ->pluck('permission_name')
+                ->unique()
+                ->all();
+        }
 
-        $roleNames = $this->pluckRoleName();
-        $check = DB::table('role_permission_procurex')
-            ->whereIn('role_code',$roleNames)
-            ->where('permission_name',$permissionName)
-            ->first();
-        return boolval($check);
+        return in_array($permissionName, $this->permissions, true);
     }
 
     public function isEmployee(): bool {
