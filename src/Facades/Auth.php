@@ -139,4 +139,10 @@ class Auth extends \Illuminate\Support\Facades\Auth {
     }
 
 
+    public static function clearPermissionCaches(): void
+    {
+        if (self::$instance) {
+            self::$instance->permissions = null;
+        }
+    }
 }
