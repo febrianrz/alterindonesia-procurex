@@ -121,6 +121,10 @@ class Auth extends \Illuminate\Support\Facades\Auth {
 
     public function can($permissionName): bool
     {
+        if ($this->isSuperadmin()) {
+            return true;
+        }
+
         if (is_null($this->permissions)) {
             $roleNames = $this->pluckRoleName();
             $this->permissions = DB::table('role_permission_procurex')
