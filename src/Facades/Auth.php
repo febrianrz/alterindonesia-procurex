@@ -24,6 +24,7 @@ class Auth extends \Illuminate\Support\Facades\Auth {
     public ?object $employee = null;
     public ?array $roles = [];
     public ?object $company = null;
+    private ?array $permissions = null;
 
     public function __construct($user) {
         $this->id = $user->id;
@@ -113,14 +114,22 @@ class Auth extends \Illuminate\Support\Facades\Auth {
         return $this->id;
     }
 
-    public function can($permissionName): bool {
+    public function can($permissionName): bool
+    {
+        if ($this->isSuperadmin()) {
+            return true;
+        }
 
+        if (is_null($this->permissions)) {
         $roleNames = $this->pluckRoleName();
-        $check = DB::table('role_permission_procurex')
+            $this->permissions = DB::table('role_permission_procurex')
             ->whereIn('role_code',$roleNames)
-            ->where('permission_name',$permissionName)
-            ->first();
-        return boolval($check);
+                ->pluck('permission_name')
+                ->unique()
+                ->all();
+        }
+
+        return in_array($permissionName, $this->permissions, true);
     }
 
     public function isEmployee(): bool {
@@ -129,4 +138,10 @@ class Auth extends \Illuminate\Support\Facades\Auth {
     }
 
 
+    public static function clearPermissionCaches(): void
+    {
+        if (self::$instance) {
+            self::$instance->permissions = null;
+        }
+    }
 }
