@@ -32,7 +32,7 @@ class ActivityLogMiddleware
 
     private function writeLog(Request $request, $response): void
     {
-        $exception = $response?->exception;
+        $exception = isset($response->exception) ? $response->exception : null;
         if(!Schema::hasColumn('user_logs','exception')){
             Schema::table('user_logs',function (Blueprint $table){
                 $table->longText('exception')->nullable();
